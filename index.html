@@ -51,7 +51,7 @@ nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(10,10
 @keyframes scroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
 
 /* Stats Grid */
-.stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; max-width:1000px; margin:0 auto 60px; padding:0 24px; }
+.stats-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:16px; max-width:1000px; margin:0 auto 60px; padding:0 24px; }
 .stat-card { background:linear-gradient(135deg,#12121a,#16162a); border:1px solid rgba(200,160,42,0.1); border-radius:16px; padding:24px; text-align:center; transition:all .3s; }
 .stat-card:hover { border-color:rgba(200,160,42,0.4); transform:translateY(-2px); box-shadow:0 8px 30px rgba(200,160,42,0.1); }
 .stat-icon { font-size:28px; margin-bottom:8px; }
@@ -155,6 +155,7 @@ footer p { font-size:12px; color:#444; }
 @media(max-width:600px) {
   .nav-links { display:none; }
   .stats-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
+  .stats-grid .stat-card:last-child { grid-column: span 2; justify-self:center; max-width:calc(50% - 5px); }
   .stat-card { padding:16px; }
   .stat-value { font-size:22px; }
   .lb-table { font-size:12px; }
@@ -228,29 +229,24 @@ footer p { font-size:12px; color:#444; }
     <div class="stat-label">Total Withdrawn</div>
   </div>
   <div class="stat-card">
-    <div class="stat-icon">📈</div>
-    <div class="stat-value"><span class="gold">$8.7M</span></div>
-    <div class="stat-label">Total Profit Generated</div>
+    <div class="stat-icon">✅</div>
+    <div class="stat-value"><span class="gold">1,250</span></div>
+    <div class="stat-label">Total Completion</div>
   </div>
   <div class="stat-card">
     <div class="stat-icon">👥</div>
-    <div class="stat-value">724</div>
-    <div class="stat-label">Funded Traders</div>
+    <div class="stat-value">791</div>
+    <div class="stat-label">Total Traders</div>
   </div>
   <div class="stat-card">
     <div class="stat-icon">🏆</div>
-    <div class="stat-value">500</div>
+    <div class="stat-value">1,350</div>
     <div class="stat-label">$100K Accounts</div>
   </div>
   <div class="stat-card">
     <div class="stat-icon">🎯</div>
-    <div class="stat-value">177</div>
+    <div class="stat-value">305</div>
     <div class="stat-label">$50K Accounts</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon">🎰</div>
-    <div class="stat-value"><span class="gold">$47.2K</span></div>
-    <div class="stat-label">Biggest Single Payout</div>
   </div>
 </div>
 
