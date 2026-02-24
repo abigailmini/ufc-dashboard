@@ -141,6 +141,16 @@ section { max-width:1000px; margin:0 auto; padding:0 24px 60px; }
 footer { text-align:center; padding:24px; border-top:1px solid #1a1a25; }
 footer p { font-size:12px; color:#444; }
 
+/* Leaderboard Tabs */
+.lb-tabs { display:flex; gap:4px; background:#0d0d14; border:1px solid rgba(200,160,42,0.1); border-radius:14px; padding:5px; margin-bottom:24px; overflow-x:auto; }
+.lb-tab { background:none; border:none; color:#666; font-size:13px; font-weight:600; padding:10px 20px; border-radius:10px; cursor:pointer; transition:all .3s; white-space:nowrap; flex:1; text-align:center; }
+.lb-tab.active { background:linear-gradient(135deg,#c8a02a,#e6b800); color:#000; }
+.lb-tab:hover:not(.active) { color:#c8a02a; background:rgba(200,160,42,0.08); }
+.lb-panel { display:none; }
+.lb-panel.active { display:block; }
+.zmode-highlight { background:linear-gradient(135deg,#1a1508,#12121a); border:1px solid rgba(200,160,42,0.2); border-radius:20px; padding:32px; text-align:center; margin-bottom:24px; position:relative; overflow:hidden; }
+.zmode-highlight::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 50% 0%, rgba(200,160,42,0.15), transparent 60%); pointer-events:none; }
+
 /* Responsive */
 @media(max-width:600px) {
   .nav-links { display:none; }
@@ -161,11 +171,10 @@ footer p { font-size:12px; color:#444; }
     <span>🏆 UNITYFUND</span>
   </div>
   <div class="nav-links">
-    <a href="#dashboard" class="active">Dashboard</a>
+    <a href="#" class="active">Dashboard</a>
     <a href="#leaderboard">Leaderboard</a>
     <a href="#scholarship">Scholarship</a>
-    <a href="#jackpot">Jackpot</a>
-    <a href="#withdrawals">Withdrawals</a>
+    <a href="#leaderboard">Jackpot</a>
   </div>
   <a href="https://fundedxyz.com" class="nav-cta">Get Funded →</a>
 </nav>
@@ -244,112 +253,261 @@ footer p { font-size:12px; color:#444; }
   </div>
 </div>
 
-<!-- Jackpot Leaderboard -->
-<section id="jackpot">
-  <div class="jackpot-banner">
-    <div class="jackpot-label">🎰 Biggest Single Withdrawal — All Time</div>
-    <div class="jackpot-amount"><span class="gold">$47,200</span></div>
-    <div class="jackpot-sub">by @WhaleCatcher • Jan 15, 2026 • $100K Account</div>
-  </div>
-
-  <div class="section-header">
-    <h2>🎰 Jackpot <span class="gold">Leaderboard</span></h2>
-    <div class="section-tabs">
-      <button class="active">All Time</button>
-      <button>This Month</button>
-      <button>This Week</button>
-    </div>
-  </div>
-
-  <table class="lb-table">
-    <tr><th>Rank</th><th>Trader</th><th>Biggest Payout</th><th>Account</th><th>Date</th></tr>
-    <tr>
-      <td><span class="rank rank-1">1</span></td>
-      <td><div class="user-cell"><div class="user-avatar">🐋</div><div><div class="user-name">WhaleCatcher</div><div class="user-handle">Malaysia</div></div></div></td>
-      <td class="profit">$47,200</td>
-      <td>$100K</td>
-      <td>Jan 15</td>
-    </tr>
-    <tr>
-      <td><span class="rank rank-2">2</span></td>
-      <td><div class="user-cell"><div class="user-avatar">🦅</div><div><div class="user-name">AceTrader</div><div class="user-handle">Singapore</div></div></div></td>
-      <td class="profit">$38,500</td>
-      <td>$100K</td>
-      <td>Feb 3</td>
-    </tr>
-    <tr>
-      <td><span class="rank rank-3">3</span></td>
-      <td><div class="user-cell"><div class="user-avatar">🔥</div><div><div class="user-name">BullRunBro</div><div class="user-handle">Indonesia</div></div></div></td>
-      <td class="profit">$31,000</td>
-      <td>$100K</td>
-      <td>Jan 28</td>
-    </tr>
-    <tr>
-      <td><span class="rank rank-n">4</span></td>
-      <td><div class="user-cell"><div class="user-avatar">💎</div><div><div class="user-name">DiamondHands_SG</div><div class="user-handle">Singapore</div></div></div></td>
-      <td class="profit">$24,800</td>
-      <td>$100K</td>
-      <td>Feb 10</td>
-    </tr>
-    <tr>
-      <td><span class="rank rank-n">5</span></td>
-      <td><div class="user-cell"><div class="user-avatar">🌙</div><div><div class="user-name">NightOwlFX</div><div class="user-handle">Thailand</div></div></div></td>
-      <td class="profit">$19,300</td>
-      <td>$50K</td>
-      <td>Feb 18</td>
-    </tr>
-  </table>
-</section>
-
-<!-- Top Earners Leaderboard -->
+<!-- Leaderboard Section with Tabs -->
 <section id="leaderboard">
   <div class="section-header">
-    <h2>🏆 Top <span class="gold">Earners</span></h2>
-    <div class="section-tabs">
-      <button class="active">All Time</button>
-      <button>30D</button>
-      <button>7D</button>
-    </div>
+    <h2>🏆 <span class="gold">Leaderboard</span></h2>
   </div>
 
-  <table class="lb-table">
-    <tr><th>Rank</th><th>Trader</th><th>Total Profit</th><th>Total Withdrawn</th><th>Trades</th></tr>
-    <tr>
-      <td><span class="rank rank-1">1</span></td>
-      <td><div class="user-cell"><div class="user-avatar">🐋</div><div><div class="user-name">WhaleCatcher</div><div class="user-handle">12 months funded</div></div></div></td>
-      <td class="profit">$187,400</td>
-      <td class="withdrawal">$142,000</td>
-      <td>847</td>
-    </tr>
-    <tr>
-      <td><span class="rank rank-2">2</span></td>
-      <td><div class="user-cell"><div class="user-avatar">🦅</div><div><div class="user-name">AceTrader</div><div class="user-handle">9 months funded</div></div></div></td>
-      <td class="profit">$156,200</td>
-      <td class="withdrawal">$118,500</td>
-      <td>623</td>
-    </tr>
-    <tr>
-      <td><span class="rank rank-3">3</span></td>
-      <td><div class="user-cell"><div class="user-avatar">🔥</div><div><div class="user-name">BullRunBro</div><div class="user-handle">8 months funded</div></div></div></td>
-      <td class="profit">$134,800</td>
-      <td class="withdrawal">$98,000</td>
-      <td>512</td>
-    </tr>
-    <tr>
-      <td><span class="rank rank-n">4</span></td>
-      <td><div class="user-cell"><div class="user-avatar">👑</div><div><div class="user-name">CryptoKing_MY</div><div class="user-handle">6 months funded</div></div></div></td>
-      <td class="profit">$98,700</td>
-      <td class="withdrawal">$76,200</td>
-      <td>445</td>
-    </tr>
-    <tr>
-      <td><span class="rank rank-n">5</span></td>
-      <td><div class="user-cell"><div class="user-avatar">💎</div><div><div class="user-name">DiamondHands_SG</div><div class="user-handle">7 months funded</div></div></div></td>
-      <td class="profit">$89,100</td>
-      <td class="withdrawal">$67,800</td>
-      <td>398</td>
-    </tr>
-  </table>
+  <!-- Leaderboard Tab Switcher -->
+  <div class="lb-tabs">
+    <button class="lb-tab active" onclick="switchLB('scholarship')">🎓 Top Scholarship</button>
+    <button class="lb-tab" onclick="switchLB('zmode')">⚡ Top Z Mode</button>
+    <button class="lb-tab" onclick="switchLB('jackpot')">🎰 Top Jackpot</button>
+    <button class="lb-tab" onclick="switchLB('withdrawals')">💸 Recent Withdrawals</button>
+  </div>
+
+  <!-- Top Scholarship -->
+  <div class="lb-panel active" id="lb-scholarship">
+    <table class="lb-table">
+      <tr><th>Rank</th><th>Trader</th><th>Scholarships</th><th>Total Earned</th><th>Current Account</th></tr>
+      <tr>
+        <td><span class="rank rank-1">1</span></td>
+        <td><div class="user-cell"><div class="user-avatar">🎓</div><div><div class="user-name">TraderJin88</div><div class="user-handle">Started from $25K → now $100K</div></div></div></td>
+        <td style="color:#c8a02a;font-weight:700">3 scholarships</td>
+        <td class="profit">$67,400</td>
+        <td>$100K ✨</td>
+      </tr>
+      <tr>
+        <td><span class="rank rank-2">2</span></td>
+        <td><div class="user-cell"><div class="user-avatar">📚</div><div><div class="user-name">ScholarKing</div><div class="user-handle">Started from $25K → now $50K</div></div></div></td>
+        <td style="color:#c8a02a;font-weight:700">2 scholarships</td>
+        <td class="profit">$42,100</td>
+        <td>$50K</td>
+      </tr>
+      <tr>
+        <td><span class="rank rank-3">3</span></td>
+        <td><div class="user-cell"><div class="user-avatar">🌟</div><div><div class="user-name">RisingStar_ID</div><div class="user-handle">Started from Starter scholarship</div></div></div></td>
+        <td style="color:#c8a02a;font-weight:700">2 scholarships</td>
+        <td class="profit">$38,900</td>
+        <td>$50K</td>
+      </tr>
+      <tr>
+        <td><span class="rank rank-n">4</span></td>
+        <td><div class="user-cell"><div class="user-avatar">🔥</div><div><div class="user-name">PhoenixRise</div><div class="user-handle">Started from $25K scholarship</div></div></div></td>
+        <td style="color:#c8a02a;font-weight:700">2 scholarships</td>
+        <td class="profit">$31,200</td>
+        <td>$50K</td>
+      </tr>
+      <tr>
+        <td><span class="rank rank-n">5</span></td>
+        <td><div class="user-cell"><div class="user-avatar">💡</div><div><div class="user-name">AlphaSeeker</div><div class="user-handle">Started from Starter scholarship</div></div></div></td>
+        <td style="color:#c8a02a;font-weight:700">1 scholarship</td>
+        <td class="profit">$24,800</td>
+        <td>$50K</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Top Completed Z Mode -->
+  <div class="lb-panel" id="lb-zmode">
+    <div class="zmode-highlight">
+      <div class="jackpot-label">⚡ Z MODE HARD — MOST COMPLETIONS</div>
+      <div class="jackpot-amount"><span class="gold">724</span></div>
+      <div class="jackpot-sub">Total Z Mode challenges completed by community</div>
+    </div>
+    <table class="lb-table">
+      <tr><th>Rank</th><th>Trader</th><th>Z Mode Completions</th><th>Win Rate</th><th>Total Payout</th></tr>
+      <tr>
+        <td><span class="rank rank-1">1</span></td>
+        <td><div class="user-cell"><div class="user-avatar">⚡</div><div><div class="user-name">WhaleCatcher</div><div class="user-handle">Z Mode Hard specialist</div></div></div></td>
+        <td style="color:#c8a02a;font-weight:700">18 completions</td>
+        <td>72%</td>
+        <td class="profit">$50,400</td>
+      </tr>
+      <tr>
+        <td><span class="rank rank-2">2</span></td>
+        <td><div class="user-cell"><div class="user-avatar">🎯</div><div><div class="user-name">AceTrader</div><div class="user-handle">Z Mode Hard + Normal</div></div></div></td>
+        <td style="color:#c8a02a;font-weight:700">15 completions</td>
+        <td>68%</td>
+        <td class="profit">$42,000</td>
+      </tr>
+      <tr>
+        <td><span class="rank rank-3">3</span></td>
+        <td><div class="user-cell"><div class="user-avatar">🏹</div><div><div class="user-name">SniperEntry</div><div class="user-handle">Z Mode Hard only</div></div></div></td>
+        <td style="color:#c8a02a;font-weight:700">12 completions</td>
+        <td>80%</td>
+        <td class="profit">$33,600</td>
+      </tr>
+      <tr>
+        <td><span class="rank rank-n">4</span></td>
+        <td><div class="user-cell"><div class="user-avatar">🔥</div><div><div class="user-name">BullRunBro</div><div class="user-handle">Z Mode Hard + Normal</div></div></div></td>
+        <td style="color:#c8a02a;font-weight:700">11 completions</td>
+        <td>55%</td>
+        <td class="profit">$30,800</td>
+      </tr>
+      <tr>
+        <td><span class="rank rank-n">5</span></td>
+        <td><div class="user-cell"><div class="user-avatar">💎</div><div><div class="user-name">DiamondHands_SG</div><div class="user-handle">Z Mode Normal specialist</div></div></div></td>
+        <td style="color:#c8a02a;font-weight:700">10 completions</td>
+        <td>63%</td>
+        <td class="profit">$36,000</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Top Jackpot -->
+  <div class="lb-panel" id="lb-jackpot">
+    <div class="jackpot-banner">
+      <div class="jackpot-label">🎰 Biggest Single Withdrawal — All Time</div>
+      <div class="jackpot-amount"><span class="gold">$47,200</span></div>
+      <div class="jackpot-sub">by @WhaleCatcher • Jan 15, 2026 • $100K Account</div>
+    </div>
+    <table class="lb-table">
+      <tr><th>Rank</th><th>Trader</th><th>Biggest Payout</th><th>Account</th><th>Date</th></tr>
+      <tr>
+        <td><span class="rank rank-1">1</span></td>
+        <td><div class="user-cell"><div class="user-avatar">🐋</div><div><div class="user-name">WhaleCatcher</div><div class="user-handle">Malaysia</div></div></div></td>
+        <td class="profit">$47,200</td>
+        <td>$100K</td>
+        <td>Jan 15</td>
+      </tr>
+      <tr>
+        <td><span class="rank rank-2">2</span></td>
+        <td><div class="user-cell"><div class="user-avatar">🦅</div><div><div class="user-name">AceTrader</div><div class="user-handle">Singapore</div></div></div></td>
+        <td class="profit">$38,500</td>
+        <td>$100K</td>
+        <td>Feb 3</td>
+      </tr>
+      <tr>
+        <td><span class="rank rank-3">3</span></td>
+        <td><div class="user-cell"><div class="user-avatar">🔥</div><div><div class="user-name">BullRunBro</div><div class="user-handle">Indonesia</div></div></div></td>
+        <td class="profit">$31,000</td>
+        <td>$100K</td>
+        <td>Jan 28</td>
+      </tr>
+      <tr>
+        <td><span class="rank rank-n">4</span></td>
+        <td><div class="user-cell"><div class="user-avatar">💎</div><div><div class="user-name">DiamondHands_SG</div><div class="user-handle">Singapore</div></div></div></td>
+        <td class="profit">$24,800</td>
+        <td>$100K</td>
+        <td>Feb 10</td>
+      </tr>
+      <tr>
+        <td><span class="rank rank-n">5</span></td>
+        <td><div class="user-cell"><div class="user-avatar">🌙</div><div><div class="user-name">NightOwlFX</div><div class="user-handle">Thailand</div></div></div></td>
+        <td class="profit">$19,300</td>
+        <td>$50K</td>
+        <td>Feb 18</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Recent Withdrawals -->
+  <div class="lb-panel" id="lb-withdrawals">
+    <div class="withdrawal-feed">
+      <div class="withdrawal-item">
+        <div class="withdrawal-left">
+          <div class="withdrawal-avatar">💰</div>
+          <div class="withdrawal-info">
+            <div class="w-name">@AceTrader</div>
+            <div class="w-time">2 hours ago • $100K Account • Z Mode Hard</div>
+          </div>
+        </div>
+        <div class="withdrawal-amount">+$8,500</div>
+      </div>
+      <div class="withdrawal-item">
+        <div class="withdrawal-left">
+          <div class="withdrawal-avatar">💰</div>
+          <div class="withdrawal-info">
+            <div class="w-name">@CryptoKing_MY</div>
+            <div class="w-time">5 hours ago • $100K Account • Z Mode Normal</div>
+          </div>
+        </div>
+        <div class="withdrawal-amount">+$4,200</div>
+      </div>
+      <div class="withdrawal-item">
+        <div class="withdrawal-left">
+          <div class="withdrawal-avatar">💰</div>
+          <div class="withdrawal-info">
+            <div class="w-name">@TraderJin88</div>
+            <div class="w-time">8 hours ago • $50K Scholarship Account</div>
+          </div>
+        </div>
+        <div class="withdrawal-amount">+$2,800</div>
+      </div>
+      <div class="withdrawal-item">
+        <div class="withdrawal-left">
+          <div class="withdrawal-avatar">💰</div>
+          <div class="withdrawal-info">
+            <div class="w-name">@NightOwlFX</div>
+            <div class="w-time">12 hours ago • $50K Account • Z Mode Hard</div>
+          </div>
+        </div>
+        <div class="withdrawal-amount">+$1,400</div>
+      </div>
+      <div class="withdrawal-item">
+        <div class="withdrawal-left">
+          <div class="withdrawal-avatar">💰</div>
+          <div class="withdrawal-info">
+            <div class="w-name">@BullRunBro</div>
+            <div class="w-time">1 day ago • $100K Account • Z Mode Hard</div>
+          </div>
+        </div>
+        <div class="withdrawal-amount">+$6,100</div>
+      </div>
+      <div class="withdrawal-item">
+        <div class="withdrawal-left">
+          <div class="withdrawal-avatar">💰</div>
+          <div class="withdrawal-info">
+            <div class="w-name">@SatoshiSam</div>
+            <div class="w-time">1 day ago • $25K Account • Z Mode Normal</div>
+          </div>
+        </div>
+        <div class="withdrawal-amount">+$3,300</div>
+      </div>
+      <div class="withdrawal-item">
+        <div class="withdrawal-left">
+          <div class="withdrawal-avatar">💰</div>
+          <div class="withdrawal-info">
+            <div class="w-name">@WhaleCatcher</div>
+            <div class="w-time">2 days ago • $100K Account • Z Mode Hard</div>
+          </div>
+        </div>
+        <div class="withdrawal-amount">+$12,000</div>
+      </div>
+      <div class="withdrawal-item">
+        <div class="withdrawal-left">
+          <div class="withdrawal-avatar">💰</div>
+          <div class="withdrawal-info">
+            <div class="w-name">@DiamondHands_SG</div>
+            <div class="w-time">2 days ago • $100K Scholarship Account</div>
+          </div>
+        </div>
+        <div class="withdrawal-amount">+$5,700</div>
+      </div>
+      <div class="withdrawal-item">
+        <div class="withdrawal-left">
+          <div class="withdrawal-avatar">💰</div>
+          <div class="withdrawal-info">
+            <div class="w-name">@PhoenixRise</div>
+            <div class="w-time">3 days ago • $50K Account • Z Mode Hard</div>
+          </div>
+        </div>
+        <div class="withdrawal-amount">+$4,900</div>
+      </div>
+      <div class="withdrawal-item">
+        <div class="withdrawal-left">
+          <div class="withdrawal-avatar">💰</div>
+          <div class="withdrawal-info">
+            <div class="w-name">@AlphaSeeker</div>
+            <div class="w-time">3 days ago • $50K Scholarship Account</div>
+          </div>
+        </div>
+        <div class="withdrawal-amount">+$2,100</div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- Scholarship Program -->
@@ -424,109 +582,6 @@ footer p { font-size:12px; color:#444; }
   </div>
 </section>
 
-<!-- Most Scholarships Taken -->
-<section>
-  <div class="section-header">
-    <h2>🎓 Top Scholarship <span class="gold">Earners</span></h2>
-  </div>
-
-  <table class="lb-table">
-    <tr><th>Rank</th><th>Trader</th><th>Scholarships</th><th>Total Earned</th><th>Current Account</th></tr>
-    <tr>
-      <td><span class="rank rank-1">1</span></td>
-      <td><div class="user-cell"><div class="user-avatar">🎓</div><div><div class="user-name">TraderJin88</div><div class="user-handle">Started from $25K scholarship</div></div></div></td>
-      <td style="color:#c8a02a;font-weight:700">3 scholarships</td>
-      <td class="profit">$67,400</td>
-      <td>$100K ✨</td>
-    </tr>
-    <tr>
-      <td><span class="rank rank-2">2</span></td>
-      <td><div class="user-cell"><div class="user-avatar">📚</div><div><div class="user-name">ScholarKing</div><div class="user-handle">Started from $25K scholarship</div></div></div></td>
-      <td style="color:#c8a02a;font-weight:700">2 scholarships</td>
-      <td class="profit">$42,100</td>
-      <td>$50K</td>
-    </tr>
-    <tr>
-      <td><span class="rank rank-3">3</span></td>
-      <td><div class="user-cell"><div class="user-avatar">🌟</div><div><div class="user-name">RisingStar_ID</div><div class="user-handle">Started from Starter scholarship</div></div></div></td>
-      <td style="color:#c8a02a;font-weight:700">2 scholarships</td>
-      <td class="profit">$38,900</td>
-      <td>$50K</td>
-    </tr>
-  </table>
-</section>
-
-<!-- Recent Withdrawals -->
-<section id="withdrawals">
-  <div class="section-header">
-    <h2>💸 Recent <span class="gold">Withdrawals</span></h2>
-    <div style="font-size:12px;color:#555;">Live • Auto-updates</div>
-  </div>
-
-  <div class="withdrawal-feed">
-    <div class="withdrawal-item">
-      <div class="withdrawal-left">
-        <div class="withdrawal-avatar">💰</div>
-        <div class="withdrawal-info">
-          <div class="w-name">@AceTrader</div>
-          <div class="w-time">2 hours ago • $100K Account</div>
-        </div>
-      </div>
-      <div class="withdrawal-amount">+$8,500</div>
-    </div>
-    <div class="withdrawal-item">
-      <div class="withdrawal-left">
-        <div class="withdrawal-avatar">💰</div>
-        <div class="withdrawal-info">
-          <div class="w-name">@CryptoKing_MY</div>
-          <div class="w-time">5 hours ago • $100K Account</div>
-        </div>
-      </div>
-      <div class="withdrawal-amount">+$4,200</div>
-    </div>
-    <div class="withdrawal-item">
-      <div class="withdrawal-left">
-        <div class="withdrawal-avatar">💰</div>
-        <div class="withdrawal-info">
-          <div class="w-name">@TraderJin88</div>
-          <div class="w-time">8 hours ago • $50K Account</div>
-        </div>
-      </div>
-      <div class="withdrawal-amount">+$2,800</div>
-    </div>
-    <div class="withdrawal-item">
-      <div class="withdrawal-left">
-        <div class="withdrawal-avatar">💰</div>
-        <div class="withdrawal-info">
-          <div class="w-name">@NightOwlFX</div>
-          <div class="w-time">12 hours ago • $50K Account</div>
-        </div>
-      </div>
-      <div class="withdrawal-amount">+$1,400</div>
-    </div>
-    <div class="withdrawal-item">
-      <div class="withdrawal-left">
-        <div class="withdrawal-avatar">💰</div>
-        <div class="withdrawal-info">
-          <div class="w-name">@BullRunBro</div>
-          <div class="w-time">1 day ago • $100K Account</div>
-        </div>
-      </div>
-      <div class="withdrawal-amount">+$6,100</div>
-    </div>
-    <div class="withdrawal-item">
-      <div class="withdrawal-left">
-        <div class="withdrawal-avatar">💰</div>
-        <div class="withdrawal-info">
-          <div class="w-name">@SatoshiSam</div>
-          <div class="w-time">1 day ago • $25K Account</div>
-        </div>
-      </div>
-      <div class="withdrawal-amount">+$3,300</div>
-    </div>
-  </div>
-</section>
-
 <!-- CTA -->
 <div class="cta-section">
   <h2>Ready to Get <span class="gold">Funded</span>?</h2>
@@ -555,5 +610,13 @@ footer p { font-size:12px; color:#444; }
   <p>© 2026 UnityCrypto.com — All withdrawal data verified by FundedXYZ</p>
 </footer>
 
+<script>
+function switchLB(tab) {
+  document.querySelectorAll('.lb-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.lb-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('lb-' + tab).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
 </body>
 </html>
