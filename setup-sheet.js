@@ -79,10 +79,10 @@ function setupDashboard() {
 
   // 8. Winning Streaks (streak count + trader names)
   s=g('Streaks');
-  s.appendRow(['Icon','Streak','Names']);
-  s.appendRow(['🔥🔥🔥🔥🔥🔥🔥','7','WhaleCatcher']);
-  s.appendRow(['🔥🔥🔥🔥🔥🔥','6','AceTrader, BullRunBro']);
-  s.appendRow(['🔥🔥🔥🔥🔥','5','DiamondHands_SG, NightOwlFX, TraderJin88']);
+  s.appendRow(['Streak','Names']);
+  s.appendRow(['7','WhaleCatcher']);
+  s.appendRow(['6','AceTrader, BullRunBro']);
+  s.appendRow(['5','DiamondHands_SG, NightOwlFX, TraderJin88']);
 
   // 10. Withdrawals (recent withdrawals feed)
   s=g('Withdrawals');

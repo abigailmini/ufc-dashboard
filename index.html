@@ -263,7 +263,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 <!-- Withdrawal Streaks -->
 <section style="margin-bottom:48px">
-  <div class="section-header"><div class="section-title"><span class="emoji">🔥</span> Winning Streaks</div></div>
+  <div class="section-header"><div class="section-title"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> Winning Streaks</div></div>
   <div class="streak-row" id="streakRow"></div>
 </section>
 
@@ -364,7 +364,8 @@ async function load(){
 
   // Streaks
   const streaks=await fetchTab('Streaks');
-  document.getElementById('streakRow').innerHTML=streaks.map(s=>`<div class="streak-card"><div class="streak-icon">${s.Icon||'🔥'}</div><div><div class="streak-name">${s.Streak||''} Winning Streaks in a Row</div><div class="streak-desc">${s.Names||''}</div></div></div>`).join('');
+  const fireSVG=n=>{let dots='';for(let i=0;i<n;i++)dots+=`<div style="width:10px;height:10px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px var(--gold-glow);flex-shrink:0"></div>`;return`<div style="display:flex;gap:4px;align-items:center;margin-bottom:8px">${dots}</div>`};
+  document.getElementById('streakRow').innerHTML=streaks.map(s=>{const n=parseInt(s.Streak)||0;return`<div class="streak-card"><div style="flex:1"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><div class="streak-name" style="color:var(--gold)">${n} Winning Streaks</div></div>${fireSVG(n)}<div class="streak-desc" style="color:var(--text2)">${s.Names||''}</div></div></div>`}).join('');
 
   // Recent Withdrawals
   const wd=await fetchTab('Withdrawals');
