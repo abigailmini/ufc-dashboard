@@ -81,7 +81,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .trader-sub{font-size:11px;color:var(--text3)}
 .mono{font-family:'JetBrains Mono',monospace;font-weight:600}
 .green{color:var(--green)}.gold{color:var(--gold)}
-.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;letter-spacing:.3px}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;letter-spacing:.3px;white-space:nowrap}
 .pill-gold{background:var(--gold-soft);color:var(--gold)}.pill-green{background:var(--green-soft);color:var(--green)}
 .pill-blue{background:var(--blue-soft);color:var(--blue)}.pill-red{background:var(--red-soft);color:var(--red)}
 .pill-orange{background:var(--orange-soft);color:var(--orange)}
@@ -246,7 +246,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="section-title"><span class="emoji">🏆</span> Total Withdrawal Leaderboard</div>
     <div class="tabs"><button class="tab active">All Time</button><button class="tab">30D</button><button class="tab">7D</button></div>
   </div>
-  <div class="card"><table class="tbl"><thead><tr><th>Rank</th><th>Trader</th><th>Tier</th><th>Withdrawals</th><th>Total Withdrawn</th></tr></thead><tbody id="lbBody"></tbody></table></div>
+  <div class="card"><table class="tbl"><thead><tr><th>Rank</th><th>Trader</th><th>Withdrawals</th><th>Total Withdrawn</th></tr></thead><tbody id="lbBody"></tbody></table></div>
 </section>
 
 <!-- Jackpot Leaderboard -->
@@ -360,7 +360,7 @@ async function load(){
 
   // Leaderboard
   const lb=await fetchTab('Leaderboard');
-  document.getElementById('lbBody').innerHTML=lb.map((r,i)=>{const rk=i+1;const rc=rk<=3?` rank-${rk}`:'';const bk=(r.Belt||'white').toLowerCase();return`<tr><td class="rank${rc}">#${rk}</td><td><div class="trader-cell"><div class="trader-av">${r.Emoji||'👤'}</div><div><div class="trader-name">${r.Name||''}</div><div class="trader-sub">${r.Subtitle||''}</div></div></div></td><td><span class="bp bp-${bk}"></span><span style="font-size:12px;color:#94a3b8">${r.Tier||''}</span></td><td class="mono">${r.Withdrawals||''}</td><td class="mono gold">${r.Total||''}</td></tr>`}).join('');
+  document.getElementById('lbBody').innerHTML=lb.map((r,i)=>{const rk=i+1;const rc=rk<=3?` rank-${rk}`:'';const bk=(r.Belt||'white').toLowerCase();return`<tr><td class="rank${rc}">#${rk}</td><td><div class="trader-cell"><div class="trader-av">${r.Emoji||'👤'}</div><div><div class="trader-name">${r.Name||''} <span class="pill pill-${bk==='black'?'gold':bk==='red'?'red':bk==='blue'?'blue':bk==='yellow'?'gold':'green'}" style="font-size:10px;vertical-align:middle;margin-left:4px">${r.Tier||''}</span></div><div class="trader-sub">${r.Subtitle||''}</div></div></div></td><td class="mono">${r.Withdrawals||''}</td><td class="mono gold">${r.Total||''}</td></tr>`}).join('');
 
   // Jackpot
   const jp=await fetchTab('Jackpot');
