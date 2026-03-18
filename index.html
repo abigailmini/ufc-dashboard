@@ -186,7 +186,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <nav class="nav"><div class="nav-inner">
   <div class="nav-brand"><span>🏆</span> UNITYFUND</div>
   <div class="nav-links">
-    <a href="#dashboard" class="active">Dashboard</a><a href="#sprint">Monthly Sprint</a><a href="#ranks">Trader Ranks</a><a href="#leaderboard">Leaderboard</a><a href="#jackpot">Jackpot</a><a href="#rising">Rising Stars</a><a href="#withdrawals">Withdrawals</a>
+    <a href="#dashboard" class="active">Dashboard</a><a href="#sprint">Monthly Sprint</a><a href="#ranks">Trader Ranks</a><a href="#leaderboard">Leaderboard</a><a href="#jackpot">Jackpot</a><a href="#withdrawals">Withdrawals</a>
   </div>
   <a href="https://fundedxyz.com" class="nav-cta">Get Funded →</a>
 </div></nav>
@@ -259,15 +259,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div class="card"><table class="tbl"><thead><tr><th>Trader</th><th>Jackpot Amount</th><th>Category</th><th>Date</th></tr></thead><tbody id="jpBody"></tbody></table></div>
 </section>
 
-<!-- Rising Stars -->
-<section id="rising" style="margin-bottom:48px">
-  <div class="section-header">
-    <div class="section-title"><span class="emoji">⭐</span> Rising Stars — <span id="risingMonth">March 2026</span></div>
-    <div style="font-size:12px;color:var(--text3)"><span class="live-dot"></span>Updated daily</div>
-  </div>
-  <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Students who withdrew this month and their total earnings so far.</p>
-  <div class="rising-grid" id="risingGrid"></div>
-</section>
+
 
 <!-- Withdrawal Streaks -->
 <section style="margin-bottom:48px">
@@ -368,12 +360,7 @@ async function load(){
   const jp=await fetchTab('Jackpot');
   document.getElementById('jpBody').innerHTML=jp.map(r=>{const pillCls=parseInt((r.Amount||'0').replace(/[$,]/g,''))>=3000?'pill-orange':'pill-gold';return`<tr><td><div class="trader-cell"><div class="trader-av">${r.Emoji||'🎰'}</div><div><div class="trader-name">${r.Name||''}</div></div></div></td><td class="mono" style="color:var(--orange)">${r.Amount||''}</td><td><span class="pill ${pillCls}">${r.Category||''}</span></td><td style="color:var(--text2)">${r.Date||''}</td></tr>`}).join('');
 
-  // Rising Stars
-  const rising=await fetchTab('Rising Stars');
-  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const now=new Date();document.getElementById('risingMonth').textContent=months[now.getMonth()]+' '+now.getFullYear();
-  const gradients=['var(--green),var(--blue)','var(--gold),var(--orange)','var(--purple),#ec4899','var(--blue),var(--purple)','var(--green),var(--gold)','var(--orange),var(--gold)','var(--red),var(--purple)','var(--blue),var(--green)'];
-  document.getElementById('risingGrid').innerHTML=rising.map((r,i)=>{return`<div class="rising-card"><span class="rising-badge wd">${r.ThisMonth||''} this month</span><div class="rising-av" style="background:linear-gradient(135deg,${gradients[i%gradients.length]})">${r.Initials||''}</div><div><div class="rising-name">${r.Name||''}</div><div class="rising-detail">Total withdrawn: <strong>${r.Total||''}</strong></div><div class="rising-meta"><span>${r.WDCount||''} withdrawals</span><span class="firm">${r.Firm||''}</span></div></div></div>`}).join('');
+
 
   // Streaks
   const streaks=await fetchTab('Streaks');

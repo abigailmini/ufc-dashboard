@@ -77,17 +77,7 @@ function setupDashboard() {
   s.appendRow(['💡','AlphaSeeker','$1,500','Jackpot 1','11 Mar 2026']);
   s.appendRow(['🌟','RisingStar_ID','$1,500','Jackpot 1','10 Mar 2026']);
 
-  // 8. Rising Stars (no Belt/Tier columns)
-  s=g('Rising Stars');
-  s.appendRow(['Initials','Name','ThisMonth','Total','WDCount','Firm']);
-  s.appendRow(['AR','Ahmad R.','$1,240','$4,640','3','PropW']);
-  s.appendRow(['FS','Farah S.','$2,100','$8,200','5','PropW']);
-  s.appendRow(['ML','Marcus L.','$3,400','$12,800','8','Bitfunded']);
-  s.appendRow(['WT','Wei Ling T.','$890','$2,890','2','Hyrotrader']);
-  s.appendRow(['DK','Darren K.','$5,200','$24,500','12','FundedXYZ']);
-  s.appendRow(['PN','Priya N.','$650','$650','1st withdrawal!','PropW']);
-
-  // 9. Winning Streaks (streak count + trader names)
+  // 8. Winning Streaks (streak count + trader names)
   s=g('Streaks');
   s.appendRow(['Icon','Streak','Names']);
   s.appendRow(['🔥🔥🔥🔥🔥🔥🔥','7','WhaleCatcher']);
@@ -108,9 +98,13 @@ function setupDashboard() {
   s.appendRow(['@PhoenixRise','$4,900','3 days ago','$50K Account','Z Mode Hard','Pionex','https://ufc.unitycrypto.com/assets/pionex_small_logo-a1ee8b53f0a0ec71156b3ef5dfdb25a763dcbe15d7634033cf733ba7440a9e73.png']);
   s.appendRow(['@AlphaSeeker','$2,100','3 days ago','$50K Account','Scholarship','PropW','https://ufc.unitycrypto.com/assets/propw_small_logo-dc0ca349d166b5555f4f5bf7df7c0fe1d7f72828e66245d73bcd971cdd2cc2cc.png']);
 
-  // Clean up default sheet
-  const s1=ss.getSheetByName('Sheet1');
-  if(s1&&ss.getSheets().length>1)try{ss.deleteSheet(s1)}catch(e){}
+  // DELETE all tabs that aren't in our list
+  const keep = ['Config','Stats','Ticker','Sprint','Belts','Leaderboard','Jackpot','Streaks','Withdrawals'];
+  ss.getSheets().forEach(sheet => {
+    if (!keep.includes(sheet.getName())) {
+      try { ss.deleteSheet(sheet); } catch(e) {}
+    }
+  });
 
   // Format all columns as plain text to prevent Google auto-formatting
   ss.getSheets().forEach(sheet => {
