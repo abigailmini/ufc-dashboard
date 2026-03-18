@@ -77,22 +77,22 @@ function setupDashboard() {
   s.appendRow(['💡','AlphaSeeker','$1,500','Jackpot 1','11 Mar 2026']);
   s.appendRow(['🌟','RisingStar_ID','$1,500','Jackpot 1','10 Mar 2026']);
 
-  // 8. Rising Stars
+  // 8. Rising Stars (no Belt/Tier columns)
   s=g('Rising Stars');
-  s.appendRow(['Initials','Name','ThisMonth','Total','WDCount','Firm','Belt','Tier']);
-  s.appendRow(['AR','Ahmad R.','$1,240','$4,640','3','PropW','white','White Trader']);
-  s.appendRow(['FS','Farah S.','$2,100','$8,200','5','PropW','white','White Trader']);
-  s.appendRow(['ML','Marcus L.','$3,400','$12,800','8','Bitfunded','yellow','Yellow Trader']);
-  s.appendRow(['WT','Wei Ling T.','$890','$2,890','2','Hyrotrader','white','White Trader']);
-  s.appendRow(['DK','Darren K.','$5,200','$24,500','12','FundedXYZ','blue','Blue Trader']);
-  s.appendRow(['PN','Priya N.','$650','$650','1st withdrawal!','PropW','white','White Trader']);
+  s.appendRow(['Initials','Name','ThisMonth','Total','WDCount','Firm']);
+  s.appendRow(['AR','Ahmad R.','$1,240','$4,640','3','PropW']);
+  s.appendRow(['FS','Farah S.','$2,100','$8,200','5','PropW']);
+  s.appendRow(['ML','Marcus L.','$3,400','$12,800','8','Bitfunded']);
+  s.appendRow(['WT','Wei Ling T.','$890','$2,890','2','Hyrotrader']);
+  s.appendRow(['DK','Darren K.','$5,200','$24,500','12','FundedXYZ']);
+  s.appendRow(['PN','Priya N.','$650','$650','1st withdrawal!','PropW']);
 
-  // 9. Streaks
+  // 9. Winning Streaks (streak count + trader names)
   s=g('Streaks');
-  s.appendRow(['Icon','Name','Description','Count']);
-  s.appendRow(['🔥','3-Month Streak','Withdrew every month for 3 consecutive months','42']);
-  s.appendRow(['🔥🔥','6-Month Streak','Half a year of consistent withdrawals','11']);
-  s.appendRow(['🔥🔥🔥','12-Month Streak','Full year — consistency champion','3']);
+  s.appendRow(['Icon','Streak','Names']);
+  s.appendRow(['🔥🔥🔥🔥🔥🔥🔥','7','WhaleCatcher']);
+  s.appendRow(['🔥🔥🔥🔥🔥🔥','6','AceTrader, BullRunBro']);
+  s.appendRow(['🔥🔥🔥🔥🔥','5','DiamondHands_SG, NightOwlFX, TraderJin88']);
 
   // 10. Withdrawals (recent withdrawals feed)
   s=g('Withdrawals');

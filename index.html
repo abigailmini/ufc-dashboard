@@ -271,7 +271,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 <!-- Withdrawal Streaks -->
 <section style="margin-bottom:48px">
-  <div class="section-header"><div class="section-title"><span class="emoji">🔥</span> Withdrawal Streaks</div></div>
+  <div class="section-header"><div class="section-title"><span class="emoji">🔥</span> Winning Streaks</div></div>
   <div class="streak-row" id="streakRow"></div>
 </section>
 
@@ -373,11 +373,11 @@ async function load(){
   const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
   const now=new Date();document.getElementById('risingMonth').textContent=months[now.getMonth()]+' '+now.getFullYear();
   const gradients=['var(--green),var(--blue)','var(--gold),var(--orange)','var(--purple),#ec4899','var(--blue),var(--purple)','var(--green),var(--gold)','var(--orange),var(--gold)','var(--red),var(--purple)','var(--blue),var(--green)'];
-  document.getElementById('risingGrid').innerHTML=rising.map((r,i)=>{const bk=(r.Belt||'white').toLowerCase();return`<div class="rising-card"><span class="rising-badge wd">${r.ThisMonth||''} this month</span><div class="rising-av" style="background:linear-gradient(135deg,${gradients[i%gradients.length]})">${r.Initials||''}</div><div><div class="rising-name">${r.Name||''}</div><div class="rising-detail">Total withdrawn: <strong>${r.Total||''}</strong></div><div class="rising-meta"><span>${r.WDCount||''} withdrawals</span><span class="firm">${r.Firm||''}</span><span><span class="bp bp-${bk}"></span>${r.Tier||''}</span></div></div></div>`}).join('');
+  document.getElementById('risingGrid').innerHTML=rising.map((r,i)=>{return`<div class="rising-card"><span class="rising-badge wd">${r.ThisMonth||''} this month</span><div class="rising-av" style="background:linear-gradient(135deg,${gradients[i%gradients.length]})">${r.Initials||''}</div><div><div class="rising-name">${r.Name||''}</div><div class="rising-detail">Total withdrawn: <strong>${r.Total||''}</strong></div><div class="rising-meta"><span>${r.WDCount||''} withdrawals</span><span class="firm">${r.Firm||''}</span></div></div></div>`}).join('');
 
   // Streaks
   const streaks=await fetchTab('Streaks');
-  document.getElementById('streakRow').innerHTML=streaks.map(s=>`<div class="streak-card"><div class="streak-icon">${s.Icon||'🔥'}</div><div><div class="streak-name">${s.Name||''}</div><div class="streak-desc">${s.Description||''}</div><div class="streak-count">${s.Count||''} traders active</div></div></div>`).join('');
+  document.getElementById('streakRow').innerHTML=streaks.map(s=>`<div class="streak-card"><div class="streak-icon">${s.Icon||'🔥'}</div><div><div class="streak-name">${s.Streak||''} Winning Streaks in a Row</div><div class="streak-desc">${s.Names||''}</div></div></div>`).join('');
 
   // Recent Withdrawals
   const wd=await fetchTab('Withdrawals');
