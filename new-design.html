@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UnityFund Challenge — Community Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0b0e14;
+  --bg2:#0f1219;
+  --card:rgba(17,20,28,0.85);
+  --card-border:rgba(255,255,255,0.06);
+  --card-hover:rgba(255,255,255,0.1);
+  --glass:rgba(255,255,255,0.03);
+  --gold:#f0b90b;
+  --gold-soft:rgba(240,185,11,0.12);
+  --gold-glow:rgba(240,185,11,0.25);
+  --green:#22c55e;
+  --green-soft:rgba(34,197,94,0.1);
+  --blue:#3b82f6;
+  --blue-soft:rgba(59,130,246,0.1);
+  --purple:#a855f7;
+  --purple-soft:rgba(168,85,247,0.1);
+  --orange:#f97316;
+  --orange-soft:rgba(249,115,22,0.1);
+  --red:#ef4444;
+  --red-soft:rgba(239,68,68,0.1);
+  --text:#f1f5f9;
+  --text2:#94a3b8;
+  --text3:#475569;
+  --radius:12px;
+  --radius-sm:8px;
+  /* Belt colors */
+  --belt-white:#e2e8f0;
+  --belt-yellow:#f0b90b;
+  --belt-blue:#3b82f6;
+  --belt-red:#ef4444;
+  --belt-black:#1e293b;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Inter',system-ui,sans-serif;
+  line-height:1.6;-webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(240,185,11,0.04),transparent 60%),
+             radial-gradient(ellipse 60% 40% at 80% 100%,rgba(59,130,246,0.03),transparent);
+  pointer-events:none;z-index:0;
+}
+
+/* ======== NAV ======== */
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(11,14,20,0.88);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--card-border);padding:0 24px;
+}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px}
+.nav-brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:14px;letter-spacing:.5px;color:var(--gold);text-transform:uppercase}
+.nav-brand span{font-size:18px}
+.nav-links{display:flex;gap:4px}
+.nav-links a{color:var(--text2);font-size:13px;font-weight:500;text-decoration:none;padding:8px 14px;border-radius:8px;transition:all .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--glass)}
+.nav-cta{background:linear-gradient(135deg,var(--gold),#d4a20a);color:#000;font-size:12px;font-weight:700;padding:8px 18px;border-radius:8px;text-decoration:none;transition:transform .15s}
+.nav-cta:hover{transform:translateY(-1px)}
+
+/* ======== LAYOUT ======== */
+.container{max-width:1200px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+
+/* ======== HERO ======== */
+.hero{text-align:center;padding:64px 0 48px}
+.hero-label{display:inline-block;font-size:12px;font-weight:600;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px}
+.hero h1{font-size:clamp(28px,4.5vw,44px);font-weight:800;line-height:1.2;margin-bottom:12px;background:linear-gradient(135deg,#fff 30%,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--text2);font-size:15px;max-width:540px;margin:0 auto 36px}
+
+/* ======== PROGRESS BAR ======== */
+.main-progress{max-width:700px;margin:0 auto 16px}
+.main-progress-labels{display:flex;justify-content:space-between;margin-bottom:8px}
+.main-progress-labels span{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600}
+.main-progress-labels .current{color:var(--gold)}
+.main-progress-labels .goal{color:var(--text3)}
+.bar-track{width:100%;height:20px;background:rgba(255,255,255,0.04);border-radius:10px;overflow:hidden;border:1px solid var(--card-border)}
+.bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,#b8860b,var(--gold),#f5d03a);position:relative;animation:barGrow 1.5s cubic-bezier(.22,1,.36,1) both}
+@keyframes barGrow{from{width:0}}
+.bar-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);animation:shimmer 3s infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.progress-note{text-align:center;font-size:13px;color:var(--text3);margin-bottom:40px}
+.progress-note strong{color:var(--text2)}
+
+/* ======== TICKER ======== */
+.ticker-wrap{overflow:hidden;border-top:1px solid var(--card-border);border-bottom:1px solid var(--card-border);padding:10px 0;margin-bottom:48px;background:var(--glass)}
+.ticker{display:flex;gap:48px;animation:tickerScroll 30s linear infinite;white-space:nowrap;width:max-content}
+@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ticker-item{font-size:13px;color:var(--text2);display:flex;align-items:center;gap:8px}
+.ticker-item .amount{color:var(--green);font-weight:600;font-family:'JetBrains Mono',monospace}
+.ticker-item img{height:16px;width:auto;border-radius:3px}
+
+/* ======== STAT CARDS ======== */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:56px}
+.stat-card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:20px;text-align:center;backdrop-filter:blur(10px)}
+.stat-card .icon{font-size:20px;margin-bottom:8px;display:block}
+.stat-card .val{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;display:block}
+.stat-card .lbl{font-size:12px;color:var(--text3);margin-top:2px}
+
+/* ======== SECTION HEADER ======== */
+.section-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+.section-title{font-size:20px;font-weight:700;display:flex;align-items:center;gap:10px}
+.section-title .emoji{font-size:22px}
+
+/* ======== TABS ======== */
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab{font-size:12px;font-weight:600;color:var(--text3);padding:6px 14px;border-radius:6px;cursor:pointer;border:1px solid transparent;transition:all .2s;background:none}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--text);background:var(--glass);border-color:var(--card-border)}
+
+/* ======== CARD ======== */
+.card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);overflow:hidden;backdrop-filter:blur(10px);margin-bottom:48px}
+.card-body{padding:24px}
+
+/* ======== TABLE ======== */
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);padding:12px 16px;border-bottom:1px solid var(--card-border)}
+.tbl thead th:last-child{text-align:right}
+.tbl tbody tr{border-bottom:1px solid rgba(255,255,255,0.03);transition:background .15s}
+.tbl tbody tr:hover{background:rgba(255,255,255,0.02)}
+.tbl tbody tr:last-child{border-bottom:none}
+.tbl td{padding:14px 16px;font-size:14px;vertical-align:middle}
+.tbl td:last-child{text-align:right}
+.tbl .rank{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;width:50px;color:var(--text3)}
+.tbl .rank-1{color:var(--gold)}
+.tbl .rank-2{color:#c0c0c0}
+.tbl .rank-3{color:#cd7f32}
+.trader-cell{display:flex;align-items:center;gap:12px}
+.trader-av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:14px;flex-shrink:0;background:var(--glass);border:1px solid var(--card-border)}
+.trader-name{font-weight:600;font-size:14px}
+.trader-sub{font-size:11px;color:var(--text3)}
+.mono{font-family:'JetBrains Mono',monospace;font-weight:600}
+.green{color:var(--green)}
+.gold{color:var(--gold)}
+
+/* ======== PILL ======== */
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;letter-spacing:.3px}
+.pill-gold{background:var(--gold-soft);color:var(--gold)}
+.pill-green{background:var(--green-soft);color:var(--green)}
+.pill-blue{background:var(--blue-soft);color:var(--blue)}
+.pill-red{background:var(--red-soft);color:var(--red)}
+.pill-orange{background:var(--orange-soft);color:var(--orange)}
+
+/* ============================================================
+   MONTHLY SPRINT
+   ============================================================ */
+.sprint-banner{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:28px;margin-bottom:48px;position:relative;overflow:hidden;backdrop-filter:blur(10px)}
+.sprint-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--green),var(--blue))}
+.sprint-row{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;margin-bottom:24px}
+.sprint-info h3{font-size:18px;font-weight:700;margin-bottom:4px}
+.sprint-info h3 .hl{color:var(--gold)}
+.sprint-info .sprint-sub{font-size:13px;color:var(--text3)}
+.sprint-info .sprint-includes{font-size:12px;color:var(--text3);margin-top:4px;display:flex;gap:12px;flex-wrap:wrap}
+.sprint-info .sprint-includes span{display:flex;align-items:center;gap:4px}
+.countdown{display:flex;gap:8px}
+.cd-unit{background:rgba(255,255,255,0.04);border:1px solid var(--card-border);border-radius:var(--radius-sm);padding:8px 12px;text-align:center;min-width:54px}
+.cd-unit .n{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;display:block}
+.cd-unit .l{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text3)}
+.sprint-bar-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+.sprint-bar-row .cur{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--gold)}
+.sprint-bar-row .tgt{font-size:13px;color:var(--text3)}
+.sprint-track{width:100%;height:22px;background:rgba(255,255,255,0.04);border-radius:11px;position:relative;border:1px solid var(--card-border);margin-bottom:8px;overflow:hidden}
+.sprint-fill{height:100%;border-radius:11px;background:linear-gradient(90deg,#b8860b,var(--gold));box-shadow:0 0 16px var(--gold-glow);animation:barGrow 1.5s cubic-bezier(.22,1,.36,1) both;position:relative}
+.sprint-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);animation:shimmer 3s infinite}
+.sprint-ms{display:flex;justify-content:space-between;padding:0 2px;margin-bottom:20px}
+.ms{font-size:11px;color:var(--text3);text-align:center}
+.ms.hit{color:var(--gold)}
+.ms .dot{width:8px;height:8px;border-radius:50%;margin:0 auto 4px;background:var(--text3)}
+.ms.hit .dot{background:var(--gold);box-shadow:0 0 8px var(--gold-glow)}
+.sprint-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.sprint-kpi{background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:var(--radius-sm);padding:14px;text-align:center}
+.sprint-kpi .v{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700}
+.sprint-kpi .l{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* ============================================================
+   BELT RANK SYSTEM
+   ============================================================ */
+.belt-tiers{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:24px}
+@media(max-width:800px){.belt-tiers{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:500px){.belt-tiers{grid-template-columns:repeat(2,1fr)}}
+.belt{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:20px 14px;text-align:center;position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
+.belt:hover{transform:translateY(-3px);border-color:var(--card-hover)}
+.belt-bar{width:48px;height:8px;border-radius:4px;margin:0 auto 12px;border:1px solid rgba(255,255,255,0.1)}
+.belt-name{font-size:14px;font-weight:700;margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px}
+.belt-range{font-size:11px;color:var(--text3);line-height:1.4;margin-bottom:12px}
+.belt-count{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700}
+.belt-count-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)}
+
+.belt-white .belt-bar{background:var(--belt-white)}
+.belt-white .belt-name{color:var(--belt-white)}
+.belt-white{border-bottom:3px solid var(--belt-white)}
+
+.belt-yellow .belt-bar{background:var(--belt-yellow)}
+.belt-yellow .belt-name{color:var(--belt-yellow)}
+.belt-yellow{border-bottom:3px solid var(--belt-yellow)}
+
+.belt-blue .belt-bar{background:var(--belt-blue)}
+.belt-blue .belt-name{color:var(--belt-blue)}
+.belt-blue{border-bottom:3px solid var(--belt-blue)}
+
+.belt-red .belt-bar{background:var(--belt-red)}
+.belt-red .belt-name{color:var(--belt-red)}
+.belt-red{border-bottom:3px solid var(--belt-red)}
+
+.belt-black .belt-bar{background:#0f172a;border:1px solid #334155}
+.belt-black .belt-name{color:#f8fafc}
+.belt-black{border-bottom:3px solid #334155}
+.belt-black::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(255,255,255,0.04),transparent 70%);pointer-events:none}
+
+/* Belt pill inline */
+.bp{display:inline-block;width:28px;height:6px;border-radius:3px;vertical-align:middle;margin-right:4px}
+.bp-white{background:var(--belt-white)}
+.bp-yellow{background:var(--belt-yellow)}
+.bp-blue{background:var(--belt-blue)}
+.bp-red{background:var(--belt-red)}
+.bp-black{background:#1e293b;border:1px solid #475569}
+
+/* ============================================================
+   RISING STARS
+   ============================================================ */
+.rising-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.rising-card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:14px;transition:transform .15s,border-color .2s;position:relative;backdrop-filter:blur(10px)}
+.rising-card:hover{transform:translateY(-2px);border-color:var(--card-hover)}
+.rising-badge{position:absolute;top:10px;right:12px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;letter-spacing:.3px}
+.rising-badge.wd{background:var(--green-soft);color:var(--green)}
+.rising-badge.funded{background:var(--blue-soft);color:var(--blue)}
+.rising-av{width:42px;height:42px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-weight:800;font-size:15px;color:#fff}
+.rising-name{font-weight:600;font-size:14px}
+.rising-detail{font-size:13px;color:var(--text2)}
+.rising-detail strong{color:var(--gold);font-family:'JetBrains Mono',monospace}
+.rising-meta{font-size:11px;color:var(--text3);margin-top:3px;display:flex;gap:8px;align-items:center}
+.rising-meta .firm{background:rgba(255,255,255,0.05);padding:2px 7px;border-radius:4px;font-size:10px;color:var(--text2)}
+
+/* ============================================================
+   STREAKS
+   ============================================================ */
+.streak-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.streak-card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:20px;display:flex;align-items:center;gap:14px;backdrop-filter:blur(10px);transition:transform .15s}
+.streak-card:hover{transform:translateY(-2px)}
+.streak-icon{font-size:28px;flex-shrink:0}
+.streak-name{font-weight:600;font-size:14px}
+.streak-desc{font-size:12px;color:var(--text3)}
+.streak-count{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--gold);margin-top:4px}
+
+/* ============================================================
+   RECENT WITHDRAWALS
+   ============================================================ */
+.wd-item{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.03);transition:background .15s}
+.wd-item:hover{background:rgba(255,255,255,0.02)}
+.wd-item:last-child{border-bottom:none}
+.wd-logo{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid var(--card-border);display:grid;place-items:center;flex-shrink:0;overflow:hidden}
+.wd-logo img{width:28px;height:28px;object-fit:contain}
+.wd-info{flex:1;min-width:0}
+.wd-info .name{font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px}
+.wd-info .name .mode-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:var(--purple-soft);color:var(--purple)}
+.wd-info .meta{font-size:12px;color:var(--text3)}
+.wd-amount{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--green);flex-shrink:0}
+
+/* ============================================================
+   SUPPORTED BY
+   ============================================================ */
+.supported{text-align:center;padding:48px 0;border-top:1px solid var(--card-border);margin-top:16px}
+.supported h3{font-size:14px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:24px}
+.supported-logos{display:flex;align-items:center;justify-content:center;gap:32px;flex-wrap:wrap}
+.supported-logos .s-logo{display:flex;flex-direction:column;align-items:center;gap:8px;opacity:.6;transition:opacity .2s}
+.supported-logos .s-logo:hover{opacity:1}
+.supported-logos .s-logo .logo-circle{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid var(--card-border);display:grid;place-items:center;font-size:24px}
+.supported-logos .s-logo .logo-name{font-size:11px;color:var(--text3);font-weight:500}
+
+/* ============================================================
+   CTA / FOOTER
+   ============================================================ */
+.cta-section{text-align:center;padding:56px 0;border-top:1px solid var(--card-border);margin-top:16px}
+.cta-section h2{font-size:24px;font-weight:800;margin-bottom:8px}
+.cta-section p{color:var(--text2);font-size:14px;margin-bottom:24px}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.cta-btns a{padding:12px 28px;border-radius:var(--radius-sm);font-size:14px;font-weight:700;text-decoration:none;transition:transform .15s}
+.cta-btns a:hover{transform:translateY(-2px)}
+.cta-primary{background:linear-gradient(135deg,var(--gold),#d4a20a);color:#000}
+.cta-secondary{background:var(--glass);border:1px solid var(--card-border);color:var(--text)}
+.cta-note{font-size:13px;color:var(--text3);margin-top:16px}
+.footer{text-align:center;padding:32px 0;font-size:12px;color:var(--text3)}
+
+/* ======== UTILITY ======== */
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite;margin-right:6px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ======== MONTH SELECTOR ======== */
+.month-selector{display:flex;align-items:center;gap:8px}
+.month-selector .arrow{width:32px;height:32px;border-radius:8px;background:var(--glass);border:1px solid var(--card-border);display:grid;place-items:center;cursor:pointer;color:var(--text2);font-size:16px;transition:all .15s}
+.month-selector .arrow:hover{color:var(--text);background:rgba(255,255,255,0.06)}
+.month-selector .month-label{font-size:14px;font-weight:600;min-width:120px;text-align:center}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .hero h1{font-size:28px}
+  .sprint-row{flex-direction:column}
+  .stat-row{grid-template-columns:repeat(2,1fr)}
+  .rising-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ====== NAV ====== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand"><span>🏆</span> UNITYFUND</div>
+    <div class="nav-links">
+      <a href="#dashboard" class="active">Dashboard</a>
+      <a href="#sprint">Monthly Sprint</a>
+      <a href="#ranks">Trader Ranks</a>
+      <a href="#leaderboard">Leaderboard</a>
+      <a href="#jackpot">Jackpot</a>
+      <a href="#rising">Rising Stars</a>
+      <a href="#withdrawals">Withdrawals</a>
+    </div>
+    <a href="https://fundedxyz.com" class="nav-cta">Get Funded →</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ====== HERO ====== -->
+<section class="hero" id="dashboard">
+  <div class="hero-label">✨ 2026 UnityFund Challenge</div>
+  <h1>Community Goal: $10 Million in 2026</h1>
+  <p>Track our community's collective trading achievement. Every withdrawal counts toward our shared milestone.</p>
+  <div class="main-progress">
+    <div class="main-progress-labels">
+      <span class="current">$3.2M</span>
+      <span class="goal">$10.0M</span>
+    </div>
+    <div class="bar-track"><div class="bar-fill" style="width:32%"></div></div>
+  </div>
+  <div class="progress-note"><strong>32.01%</strong> towards our 2026 goal • Verified by FundedXYZ</div>
+</section>
+
+<!-- ====== TICKER ====== -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <div class="ticker-item">💰 @CryptoKing_MY withdrew <span class="amount">$4,200</span></div>
+    <div class="ticker-item">💰 @TraderJin88 withdrew <span class="amount">$2,800</span></div>
+    <div class="ticker-item">🎰 @AceTrader jackpot <span class="amount">$8,500</span></div>
+    <div class="ticker-item">💰 @NightOwlFX withdrew <span class="amount">$1,400</span></div>
+    <div class="ticker-item">💰 @BullRunBro withdrew <span class="amount">$6,100</span></div>
+    <div class="ticker-item">🎰 @SatoshiSam jackpot <span class="amount">$3,300</span></div>
+    <div class="ticker-item">💰 @WhaleCatcher withdrew <span class="amount">$12,000</span></div>
+    <div class="ticker-item">💰 @DiamondHands_SG withdrew <span class="amount">$5,700</span></div>
+    <div class="ticker-item">💰 @CryptoKing_MY withdrew <span class="amount">$4,200</span></div>
+    <div class="ticker-item">💰 @TraderJin88 withdrew <span class="amount">$2,800</span></div>
+    <div class="ticker-item">🎰 @AceTrader jackpot <span class="amount">$8,500</span></div>
+    <div class="ticker-item">💰 @NightOwlFX withdrew <span class="amount">$1,400</span></div>
+    <div class="ticker-item">💰 @BullRunBro withdrew <span class="amount">$6,100</span></div>
+    <div class="ticker-item">🎰 @SatoshiSam jackpot <span class="amount">$3,300</span></div>
+    <div class="ticker-item">💰 @WhaleCatcher withdrew <span class="amount">$12,000</span></div>
+    <div class="ticker-item">💰 @DiamondHands_SG withdrew <span class="amount">$5,700</span></div>
+  </div>
+</div>
+
+<!-- ====== STAT ROW ====== -->
+<div class="stat-row">
+  <div class="stat-card"><span class="icon">💰</span><span class="val">$3.2M</span><span class="lbl">Total Withdrawn</span></div>
+  <div class="stat-card"><span class="icon">✅</span><span class="val">1,250</span><span class="lbl">Total Completions</span></div>
+  <div class="stat-card"><span class="icon">👥</span><span class="val">791</span><span class="lbl">Total Traders</span></div>
+  <div class="stat-card"><span class="icon">🏆</span><span class="val">1,350</span><span class="lbl">$100K Accounts</span></div>
+  <div class="stat-card"><span class="icon">🎯</span><span class="val">305</span><span class="lbl">$50K Accounts</span></div>
+</div>
+
+<!-- ================================================================
+     MONTHLY SPRINT (Jackpot + Prop Withdrawal combined)
+     ================================================================ -->
+<section id="sprint">
+  <div class="section-header">
+    <div class="section-title"><span class="emoji">🎯</span> Monthly Sprint Challenge</div>
+    <div class="month-selector">
+      <div class="arrow">‹</div>
+      <div class="month-label">March 2026</div>
+      <div class="arrow">›</div>
+    </div>
+  </div>
+
+  <div class="sprint-banner">
+    <div class="sprint-row">
+      <div class="sprint-info">
+        <h3>March Target: <span class="hl">$420,000</span></h3>
+        <div class="sprint-sub">Combined jackpot + prop firm withdrawals • Updated daily</div>
+        <div class="sprint-includes">
+          <span>🎰 Jackpot: $124,500</span>
+          <span>💰 Prop Withdrawals: $143,300</span>
+        </div>
+      </div>
+      <div class="countdown">
+        <div class="cd-unit"><span class="n" id="cd-d">15</span><span class="l">Days</span></div>
+        <div class="cd-unit"><span class="n" id="cd-h">08</span><span class="l">Hrs</span></div>
+        <div class="cd-unit"><span class="n" id="cd-m">42</span><span class="l">Min</span></div>
+      </div>
+    </div>
+
+    <div class="sprint-bar-row">
+      <span class="cur">$267,800</span>
+      <span class="tgt">Goal: $420,000</span>
+    </div>
+    <div class="sprint-track"><div class="sprint-fill" style="width:63.8%"></div></div>
+    <div class="sprint-ms">
+      <div class="ms hit"><div class="dot"></div>$0</div>
+      <div class="ms hit"><div class="dot"></div>$105K</div>
+      <div class="ms hit"><div class="dot"></div>$210K</div>
+      <div class="ms"><div class="dot"></div>$315K</div>
+      <div class="ms"><div class="dot"></div>$420K</div>
+    </div>
+
+    <div class="sprint-kpis">
+      <div class="sprint-kpi"><div class="v" style="color:var(--green)">87</div><div class="l">Total Withdrawals</div></div>
+      <div class="sprint-kpi"><div class="v" style="color:var(--orange)">32</div><div class="l">Jackpot Wins</div></div>
+      <div class="sprint-kpi"><div class="v" style="color:var(--blue)">23</div><div class="l">New Funded</div></div>
+      <div class="sprint-kpi"><div class="v" style="color:var(--gold)">$3,079</div><div class="l">Avg Withdrawal</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     BELT RANK SYSTEM
+     ================================================================ -->
+<section id="ranks" style="margin-bottom:48px">
+  <div class="section-header">
+    <div class="section-title"><span class="emoji">🥋</span> Trader Rank System</div>
+  </div>
+
+  <div class="belt-tiers">
+    <div class="belt belt-white">
+      <div class="belt-bar"></div>
+      <div class="belt-name">White Trader</div>
+      <div class="belt-range">Below $10K withdrawn</div>
+      <div class="belt-count" style="color:var(--belt-white)">342</div>
+      <div class="belt-count-lbl">Traders</div>
+    </div>
+    <div class="belt belt-yellow">
+      <div class="belt-bar"></div>
+      <div class="belt-name">Yellow Trader</div>
+      <div class="belt-range">$10K — $20K withdrawn</div>
+      <div class="belt-count" style="color:var(--belt-yellow)">128</div>
+      <div class="belt-count-lbl">Traders</div>
+    </div>
+    <div class="belt belt-blue">
+      <div class="belt-bar"></div>
+      <div class="belt-name">Blue Trader</div>
+      <div class="belt-range">$20K — $50K withdrawn</div>
+      <div class="belt-count" style="color:var(--belt-blue)">74</div>
+      <div class="belt-count-lbl">Traders</div>
+    </div>
+    <div class="belt belt-red">
+      <div class="belt-bar"></div>
+      <div class="belt-name">Red Trader</div>
+      <div class="belt-range">$50K — $100K withdrawn</div>
+      <div class="belt-count" style="color:var(--belt-red)">18</div>
+      <div class="belt-count-lbl">Traders</div>
+    </div>
+    <div class="belt belt-black">
+      <div class="belt-bar"></div>
+      <div class="belt-name">Black Trader</div>
+      <div class="belt-range">$100K+ withdrawn</div>
+      <div class="belt-count" style="color:#f8fafc">5</div>
+      <div class="belt-count-lbl">Traders</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     TOTAL WITHDRAWAL LEADERBOARD
+     ================================================================ -->
+<section id="leaderboard" style="margin-bottom:48px">
+  <div class="section-header">
+    <div class="section-title"><span class="emoji">🏆</span> Total Withdrawal Leaderboard</div>
+    <div class="tabs">
+      <button class="tab active">All Time</button>
+      <button class="tab">30D</button>
+      <button class="tab">7D</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Trader</th>
+          <th>Tier</th>
+          <th>Withdrawals</th>
+          <th>Total Withdrawn</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="rank rank-1">#1</td>
+          <td><div class="trader-cell"><div class="trader-av">🐋</div><div><div class="trader-name">WhaleCatcher</div><div class="trader-sub">Malaysia • $100K Account</div></div></div></td>
+          <td><span class="bp bp-black"></span><span style="font-size:12px;color:#94a3b8">Black Trader</span></td>
+          <td class="mono">34</td>
+          <td class="mono gold">$147,200</td>
+        </tr>
+        <tr>
+          <td class="rank rank-2">#2</td>
+          <td><div class="trader-cell"><div class="trader-av">🦅</div><div><div class="trader-name">AceTrader</div><div class="trader-sub">Singapore • $100K Account</div></div></div></td>
+          <td><span class="bp bp-black"></span><span style="font-size:12px;color:#94a3b8">Black Trader</span></td>
+          <td class="mono">28</td>
+          <td class="mono gold">$128,500</td>
+        </tr>
+        <tr>
+          <td class="rank rank-3">#3</td>
+          <td><div class="trader-cell"><div class="trader-av">🔥</div><div><div class="trader-name">BullRunBro</div><div class="trader-sub">Indonesia • $100K Account</div></div></div></td>
+          <td><span class="bp bp-black"></span><span style="font-size:12px;color:#94a3b8">Black Trader</span></td>
+          <td class="mono">25</td>
+          <td class="mono gold">$112,000</td>
+        </tr>
+        <tr>
+          <td class="rank">#4</td>
+          <td><div class="trader-cell"><div class="trader-av">💎</div><div><div class="trader-name">DiamondHands_SG</div><div class="trader-sub">Singapore • $100K Account</div></div></div></td>
+          <td><span class="bp bp-red"></span><span style="font-size:12px;color:#94a3b8">Red Trader</span></td>
+          <td class="mono">22</td>
+          <td class="mono gold">$84,800</td>
+        </tr>
+        <tr>
+          <td class="rank">#5</td>
+          <td><div class="trader-cell"><div class="trader-av">🌙</div><div><div class="trader-name">NightOwlFX</div><div class="trader-sub">Thailand • $50K Account</div></div></div></td>
+          <td><span class="bp bp-red"></span><span style="font-size:12px;color:#94a3b8">Red Trader</span></td>
+          <td class="mono">19</td>
+          <td class="mono gold">$67,300</td>
+        </tr>
+        <tr>
+          <td class="rank">#6</td>
+          <td><div class="trader-cell"><div class="trader-av">🎓</div><div><div class="trader-name">TraderJin88</div><div class="trader-sub">Malaysia • $100K Account</div></div></div></td>
+          <td><span class="bp bp-red"></span><span style="font-size:12px;color:#94a3b8">Red Trader</span></td>
+          <td class="mono">18</td>
+          <td class="mono gold">$58,400</td>
+        </tr>
+        <tr>
+          <td class="rank">#7</td>
+          <td><div class="trader-cell"><div class="trader-av">🏹</div><div><div class="trader-name">SniperEntry</div><div class="trader-sub">Philippines • $50K Account</div></div></div></td>
+          <td><span class="bp bp-blue"></span><span style="font-size:12px;color:#94a3b8">Blue Trader</span></td>
+          <td class="mono">15</td>
+          <td class="mono gold">$43,600</td>
+        </tr>
+        <tr>
+          <td class="rank">#8</td>
+          <td><div class="trader-cell"><div class="trader-av">⚡</div><div><div class="trader-name">CryptoKing_MY</div><div class="trader-sub">Malaysia • $100K Account</div></div></div></td>
+          <td><span class="bp bp-blue"></span><span style="font-size:12px;color:#94a3b8">Blue Trader</span></td>
+          <td class="mono">14</td>
+          <td class="mono gold">$38,200</td>
+        </tr>
+        <tr>
+          <td class="rank">#9</td>
+          <td><div class="trader-cell"><div class="trader-av">🌟</div><div><div class="trader-name">RisingStar_ID</div><div class="trader-sub">Indonesia • $50K Account</div></div></div></td>
+          <td><span class="bp bp-blue"></span><span style="font-size:12px;color:#94a3b8">Blue Trader</span></td>
+          <td class="mono">12</td>
+          <td class="mono gold">$28,900</td>
+        </tr>
+        <tr>
+          <td class="rank">#10</td>
+          <td><div class="trader-cell"><div class="trader-av">💡</div><div><div class="trader-name">AlphaSeeker</div><div class="trader-sub">Vietnam • $50K Account</div></div></div></td>
+          <td><span class="bp bp-yellow"></span><span style="font-size:12px;color:#94a3b8">Yellow Trader</span></td>
+          <td class="mono">10</td>
+          <td class="mono gold">$18,800</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ================================================================
+     JACKPOT LEADERBOARD
+     ================================================================ -->
+<section id="jackpot" style="margin-bottom:48px">
+  <div class="section-header">
+    <div class="section-title"><span class="emoji">🎰</span> Jackpot Leaderboard</div>
+    <div class="tabs">
+      <button class="tab active">All Time</button>
+      <button class="tab">This Month</button>
+      <button class="tab">This Week</button>
+    </div>
+  </div>
+  <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Every jackpot hit ($1,500 — $5,000) recorded day by day. See who's hitting big.</p>
+
+  <div class="card">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Trader</th>
+          <th>Jackpot Amount</th>
+          <th>Category</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="trader-cell"><div class="trader-av">🐋</div><div><div class="trader-name">WhaleCatcher</div></div></div></td>
+          <td class="mono" style="color:var(--orange)">$5,000</td>
+          <td><span class="pill pill-orange">Jackpot 2</span></td>
+          <td style="color:var(--text2)">16 Mar 2026</td>
+        </tr>
+        <tr>
+          <td><div class="trader-cell"><div class="trader-av">🦅</div><div><div class="trader-name">AceTrader</div></div></div></td>
+          <td class="mono" style="color:var(--orange)">$4,200</td>
+          <td><span class="pill pill-orange">Jackpot 2</span></td>
+          <td style="color:var(--text2)">16 Mar 2026</td>
+        </tr>
+        <tr>
+          <td><div class="trader-cell"><div class="trader-av">🔥</div><div><div class="trader-name">BullRunBro</div></div></div></td>
+          <td class="mono" style="color:var(--orange)">$3,800</td>
+          <td><span class="pill pill-orange">Jackpot 2</span></td>
+          <td style="color:var(--text2)">15 Mar 2026</td>
+        </tr>
+        <tr>
+          <td><div class="trader-cell"><div class="trader-av">⚡</div><div><div class="trader-name">CryptoKing_MY</div></div></div></td>
+          <td class="mono" style="color:var(--orange)">$3,500</td>
+          <td><span class="pill pill-orange">Jackpot 2</span></td>
+          <td style="color:var(--text2)">15 Mar 2026</td>
+        </tr>
+        <tr>
+          <td><div class="trader-cell"><div class="trader-av">💎</div><div><div class="trader-name">DiamondHands_SG</div></div></div></td>
+          <td class="mono" style="color:var(--orange)">$2,900</td>
+          <td><span class="pill pill-gold">Jackpot 1</span></td>
+          <td style="color:var(--text2)">14 Mar 2026</td>
+        </tr>
+        <tr>
+          <td><div class="trader-cell"><div class="trader-av">🌙</div><div><div class="trader-name">NightOwlFX</div></div></div></td>
+          <td class="mono" style="color:var(--orange)">$2,400</td>
+          <td><span class="pill pill-gold">Jackpot 1</span></td>
+          <td style="color:var(--text2)">14 Mar 2026</td>
+        </tr>
+        <tr>
+          <td><div class="trader-cell"><div class="trader-av">🎓</div><div><div class="trader-name">TraderJin88</div></div></div></td>
+          <td class="mono" style="color:var(--orange)">$2,100</td>
+          <td><span class="pill pill-gold">Jackpot 1</span></td>
+          <td style="color:var(--text2)">13 Mar 2026</td>
+        </tr>
+        <tr>
+          <td><div class="trader-cell"><div class="trader-av">🏹</div><div><div class="trader-name">SniperEntry</div></div></div></td>
+          <td class="mono" style="color:var(--orange)">$1,800</td>
+          <td><span class="pill pill-gold">Jackpot 1</span></td>
+          <td style="color:var(--text2)">12 Mar 2026</td>
+        </tr>
+        <tr>
+          <td><div class="trader-cell"><div class="trader-av">💡</div><div><div class="trader-name">AlphaSeeker</div></div></div></td>
+          <td class="mono" style="color:var(--orange)">$1,500</td>
+          <td><span class="pill pill-gold">Jackpot 1</span></td>
+          <td style="color:var(--text2)">11 Mar 2026</td>
+        </tr>
+        <tr>
+          <td><div class="trader-cell"><div class="trader-av">🌟</div><div><div class="trader-name">RisingStar_ID</div></div></div></td>
+          <td class="mono" style="color:var(--orange)">$1,500</td>
+          <td><span class="pill pill-gold">Jackpot 1</span></td>
+          <td style="color:var(--text2)">10 Mar 2026</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ================================================================
+     RISING STARS — THIS MONTH
+     ================================================================ -->
+<section id="rising" style="margin-bottom:48px">
+  <div class="section-header">
+    <div class="section-title"><span class="emoji">⭐</span> Rising Stars — March 2026</div>
+    <div style="font-size:12px;color:var(--text3)"><span class="live-dot"></span>Updated daily</div>
+  </div>
+  <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Students who withdrew this month and their total earnings so far.</p>
+
+  <div class="rising-grid">
+    <div class="rising-card">
+      <span class="rising-badge wd">$1,240 this month</span>
+      <div class="rising-av" style="background:linear-gradient(135deg,var(--green),var(--blue))">AR</div>
+      <div>
+        <div class="rising-name">Ahmad R.</div>
+        <div class="rising-detail">Total withdrawn: <strong>$4,640</strong></div>
+        <div class="rising-meta"><span>3 withdrawals</span><span class="firm">PropW</span><span><span class="bp bp-white"></span>White Trader</span></div>
+      </div>
+    </div>
+    <div class="rising-card">
+      <span class="rising-badge wd">$2,100 this month</span>
+      <div class="rising-av" style="background:linear-gradient(135deg,var(--gold),var(--orange))">FS</div>
+      <div>
+        <div class="rising-name">Farah S.</div>
+        <div class="rising-detail">Total withdrawn: <strong>$8,200</strong></div>
+        <div class="rising-meta"><span>5 withdrawals</span><span class="firm">PropW</span><span><span class="bp bp-white"></span>White Trader</span></div>
+      </div>
+    </div>
+    <div class="rising-card">
+      <span class="rising-badge wd">$3,400 this month</span>
+      <div class="rising-av" style="background:linear-gradient(135deg,var(--purple),#ec4899)">ML</div>
+      <div>
+        <div class="rising-name">Marcus L.</div>
+        <div class="rising-detail">Total withdrawn: <strong>$12,800</strong></div>
+        <div class="rising-meta"><span>8 withdrawals</span><span class="firm">Bitfunded</span><span><span class="bp bp-yellow"></span>Yellow Trader</span></div>
+      </div>
+    </div>
+    <div class="rising-card">
+      <span class="rising-badge wd">$890 this month</span>
+      <div class="rising-av" style="background:linear-gradient(135deg,var(--blue),var(--purple))">WT</div>
+      <div>
+        <div class="rising-name">Wei Ling T.</div>
+        <div class="rising-detail">Total withdrawn: <strong>$2,890</strong></div>
+        <div class="rising-meta"><span>2 withdrawals</span><span class="firm">Hyrotrader</span><span><span class="bp bp-white"></span>White Trader</span></div>
+      </div>
+    </div>
+    <div class="rising-card">
+      <span class="rising-badge wd">$5,200 this month</span>
+      <div class="rising-av" style="background:linear-gradient(135deg,var(--green),var(--gold))">DK</div>
+      <div>
+        <div class="rising-name">Darren K.</div>
+        <div class="rising-detail">Total withdrawn: <strong>$24,500</strong></div>
+        <div class="rising-meta"><span>12 withdrawals</span><span class="firm">FundedXYZ</span><span><span class="bp bp-blue"></span>Blue Trader</span></div>
+      </div>
+    </div>
+    <div class="rising-card">
+      <span class="rising-badge wd">$650 this month</span>
+      <div class="rising-av" style="background:linear-gradient(135deg,var(--orange),var(--gold))">PN</div>
+      <div>
+        <div class="rising-name">Priya N.</div>
+        <div class="rising-detail">Total withdrawn: <strong>$650</strong></div>
+        <div class="rising-meta"><span>1st withdrawal!</span><span class="firm">PropW</span><span><span class="bp bp-white"></span>White Trader</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     WITHDRAWAL STREAKS
+     ================================================================ -->
+<section style="margin-bottom:48px">
+  <div class="section-header">
+    <div class="section-title"><span class="emoji">🔥</span> Withdrawal Streaks</div>
+  </div>
+  <div class="streak-row">
+    <div class="streak-card">
+      <div class="streak-icon">🔥</div>
+      <div><div class="streak-name">3-Month Streak</div><div class="streak-desc">Withdrew every month for 3 consecutive months</div><div class="streak-count">42 traders active</div></div>
+    </div>
+    <div class="streak-card">
+      <div class="streak-icon">🔥🔥</div>
+      <div><div class="streak-name">6-Month Streak</div><div class="streak-desc">Half a year of consistent withdrawals</div><div class="streak-count">11 traders active</div></div>
+    </div>
+    <div class="streak-card">
+      <div class="streak-icon">🔥🔥🔥</div>
+      <div><div class="streak-name">12-Month Streak</div><div class="streak-desc">Full year — consistency champion</div><div class="streak-count">3 traders active</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     RECENT WITHDRAWALS — with prop firm logo, account, mode
+     ================================================================ -->
+<section id="withdrawals" style="margin-bottom:48px">
+  <div class="section-header">
+    <div class="section-title"><span class="emoji">💸</span> Recent Withdrawals</div>
+    <div style="font-size:12px;color:var(--text2)"><span class="live-dot"></span>Updated daily</div>
+  </div>
+  <div class="card">
+    <div class="wd-item">
+      <div class="wd-logo"><img src="https://ufc.unitycrypto.com/assets/propw_small_logo-dc0ca349d166b5555f4f5bf7df7c0fe1d7f72828e66245d73bcd971cdd2cc2cc.png" alt="PropW"></div>
+      <div class="wd-info">
+        <div class="name">@AceTrader <span class="mode-tag">Z Mode Hard</span></div>
+        <div class="meta">2 hours ago • $100K Account • PropW</div>
+      </div>
+      <div class="wd-amount">+$8,500</div>
+    </div>
+    <div class="wd-item">
+      <div class="wd-logo"><img src="https://ufc.unitycrypto.com/assets/hyrotrader_small_logo-5b6f64d65522469d6c4fb709fcc46a19b3c0209679c93ea793e0190abc97e77d.png" alt="Hyrotrader"></div>
+      <div class="wd-info">
+        <div class="name">@CryptoKing_MY <span class="mode-tag">Z Mode Normal</span></div>
+        <div class="meta">5 hours ago • $100K Account • Hyrotrader</div>
+      </div>
+      <div class="wd-amount">+$4,200</div>
+    </div>
+    <div class="wd-item">
+      <div class="wd-logo"><img src="https://ufc.unitycrypto.com/assets/mcf_logo-dd0b8ebf49605b26219226f57fc1fe8cc68f6fc02bc9825e2cb0a5a148eec419.png" alt="MyCryptoFund"></div>
+      <div class="wd-info">
+        <div class="name">@TraderJin88 <span class="mode-tag" style="background:var(--gold-soft);color:var(--gold)">Scholarship</span></div>
+        <div class="meta">8 hours ago • $50K Account • MyCryptoFund</div>
+      </div>
+      <div class="wd-amount">+$2,800</div>
+    </div>
+    <div class="wd-item">
+      <div class="wd-logo"><img src="https://ufc.unitycrypto.com/assets/propw_small_logo-dc0ca349d166b5555f4f5bf7df7c0fe1d7f72828e66245d73bcd971cdd2cc2cc.png" alt="PropW"></div>
+      <div class="wd-info">
+        <div class="name">@NightOwlFX <span class="mode-tag">Z Mode Hard</span></div>
+        <div class="meta">12 hours ago • $50K Account • PropW</div>
+      </div>
+      <div class="wd-amount">+$1,400</div>
+    </div>
+    <div class="wd-item">
+      <div class="wd-logo"><img src="https://ufc.unitycrypto.com/assets/pionex_small_logo-a1ee8b53f0a0ec71156b3ef5dfdb25a763dcbe15d7634033cf733ba7440a9e73.png" alt="Pionex"></div>
+      <div class="wd-info">
+        <div class="name">@BullRunBro <span class="mode-tag">Z Mode Hard</span></div>
+        <div class="meta">1 day ago • $100K Account • Pionex</div>
+      </div>
+      <div class="wd-amount">+$6,100</div>
+    </div>
+    <div class="wd-item">
+      <div class="wd-logo"><img src="https://ufc.unitycrypto.com/assets/propw_small_logo-dc0ca349d166b5555f4f5bf7df7c0fe1d7f72828e66245d73bcd971cdd2cc2cc.png" alt="PropW"></div>
+      <div class="wd-info">
+        <div class="name">@SatoshiSam <span class="mode-tag" style="background:var(--blue-soft);color:var(--blue)">Z Mode Normal</span></div>
+        <div class="meta">1 day ago • $25K Account • PropW</div>
+      </div>
+      <div class="wd-amount">+$3,300</div>
+    </div>
+    <div class="wd-item">
+      <div class="wd-logo"><img src="https://ufc.unitycrypto.com/assets/hyrotrader_small_logo-5b6f64d65522469d6c4fb709fcc46a19b3c0209679c93ea793e0190abc97e77d.png" alt="Hyrotrader"></div>
+      <div class="wd-info">
+        <div class="name">@WhaleCatcher <span class="mode-tag">Z Mode Hard</span></div>
+        <div class="meta">2 days ago • $100K Account • Hyrotrader</div>
+      </div>
+      <div class="wd-amount">+$12,000</div>
+    </div>
+    <div class="wd-item">
+      <div class="wd-logo"><img src="https://ufc.unitycrypto.com/assets/mcf_logo-dd0b8ebf49605b26219226f57fc1fe8cc68f6fc02bc9825e2cb0a5a148eec419.png" alt="MyCryptoFund"></div>
+      <div class="wd-info">
+        <div class="name">@DiamondHands_SG <span class="mode-tag" style="background:var(--gold-soft);color:var(--gold)">Scholarship</span></div>
+        <div class="meta">2 days ago • $100K Account • MyCryptoFund</div>
+      </div>
+      <div class="wd-amount">+$5,700</div>
+    </div>
+    <div class="wd-item">
+      <div class="wd-logo"><img src="https://ufc.unitycrypto.com/assets/pionex_small_logo-a1ee8b53f0a0ec71156b3ef5dfdb25a763dcbe15d7634033cf733ba7440a9e73.png" alt="Pionex"></div>
+      <div class="wd-info">
+        <div class="name">@PhoenixRise <span class="mode-tag">Z Mode Hard</span></div>
+        <div class="meta">3 days ago • $50K Account • Pionex</div>
+      </div>
+      <div class="wd-amount">+$4,900</div>
+    </div>
+    <div class="wd-item">
+      <div class="wd-logo"><img src="https://ufc.unitycrypto.com/assets/propw_small_logo-dc0ca349d166b5555f4f5bf7df7c0fe1d7f72828e66245d73bcd971cdd2cc2cc.png" alt="PropW"></div>
+      <div class="wd-info">
+        <div class="name">@AlphaSeeker <span class="mode-tag" style="background:var(--gold-soft);color:var(--gold)">Scholarship</span></div>
+        <div class="meta">3 days ago • $50K Account • PropW</div>
+      </div>
+      <div class="wd-amount">+$2,100</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     SUPPORTED BY — Prop Firm Logos
+     ================================================================ -->
+<section class="supported">
+  <h3>Supported By</h3>
+  <div class="supported-logos">
+    <div class="s-logo">
+      <div class="logo-circle"><img src="https://ufc.unitycrypto.com/assets/fundedxyz_small_logo-e1174fb845f03d2c1b0bd3c30545de62ade040ce46b186b8cd7fee0e8555560f.png" alt="FundedXYZ" style="width:32px;height:32px;object-fit:contain"></div>
+      <div class="logo-name">FundedXYZ</div>
+    </div>
+    <div class="s-logo">
+      <div class="logo-circle"><img src="https://ufc.unitycrypto.com/assets/propw_small_logo-dc0ca349d166b5555f4f5bf7df7c0fe1d7f72828e66245d73bcd971cdd2cc2cc.png" alt="PropW" style="width:32px;height:32px;object-fit:contain"></div>
+      <div class="logo-name">PropW</div>
+    </div>
+    <div class="s-logo">
+      <div class="logo-circle"><img src="https://ufc.unitycrypto.com/assets/hyrotrader_small_logo-5b6f64d65522469d6c4fb709fcc46a19b3c0209679c93ea793e0190abc97e77d.png" alt="Bitfunded" style="width:32px;height:32px;object-fit:contain"></div>
+      <div class="logo-name">Bitfunded</div>
+    </div>
+    <div class="s-logo">
+      <div class="logo-circle"><img src="https://ufc.unitycrypto.com/assets/pionex_small_logo-a1ee8b53f0a0ec71156b3ef5dfdb25a763dcbe15d7634033cf733ba7440a9e73.png" alt="Pionex" style="width:32px;height:32px;object-fit:contain"></div>
+      <div class="logo-name">Pionex</div>
+    </div>
+    <div class="s-logo">
+      <div class="logo-circle"><img src="https://ufc.unitycrypto.com/assets/mcf_logo-dd0b8ebf49605b26219226f57fc1fe8cc68f6fc02bc9825e2cb0a5a148eec419.png" alt="MyCryptoFund" style="width:32px;height:32px;object-fit:contain"></div>
+      <div class="logo-name">MyCryptoFund</div>
+    </div>
+    <div class="s-logo">
+      <div class="logo-circle" style="font-size:13px;font-weight:700;color:var(--text2)">B</div>
+      <div class="logo-name">Bybit</div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== CTA ====== -->
+<section class="cta-section">
+  <h2>Ready to Get Funded?</h2>
+  <p>Join 791+ funded traders. Start your prop trading journey with up to $100K in capital.</p>
+  <div class="cta-btns">
+    <a href="https://fundedxyz.com" class="cta-primary">🚀 Get Funded on FundedXYZ</a>
+    <a href="#" class="cta-secondary">📋 Apply for Scholarship</a>
+  </div>
+  <div class="cta-note">✨ Get extra 10% when you register through our referral!</div>
+</section>
+
+<div class="footer">© 2026 UnityCrypto.com — All withdrawal data verified by prop firm partners</div>
+
+</div>
+
+<script>
+// Countdown
+function updateCD(){
+  const now=new Date();
+  const end=new Date(now.getFullYear(),now.getMonth()+1,0,23,59,59);
+  const t=end-now;
+  if(t<=0)return;
+  document.getElementById('cd-d').textContent=String(Math.floor(t/864e5)).padStart(2,'0');
+  document.getElementById('cd-h').textContent=String(Math.floor((t%864e5)/36e5)).padStart(2,'0');
+  document.getElementById('cd-m').textContent=String(Math.floor((t%36e5)/6e4)).padStart(2,'0');
+}
+updateCD();setInterval(updateCD,60000);
+
+// Tabs
+document.querySelectorAll('.tabs').forEach(g=>{
+  g.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click',()=>{
+      g.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+    });
+  });
+});
+
+// Nav scroll
+document.querySelectorAll('.nav-links a').forEach(a=>{
+  a.addEventListener('click',e=>{
+    document.querySelectorAll('.nav-links a').forEach(x=>x.classList.remove('active'));
+    a.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
