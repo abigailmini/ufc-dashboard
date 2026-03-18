@@ -320,8 +320,15 @@ async function load(){
   document.getElementById('prog-note').innerHTML=`<strong>${pct}%</strong> towards our 2026 goal • Verified by FundedXYZ`;
 
   // Stats
+  const STAT_ICONS={
+    'Total Withdrawn':`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
+    'Total Completions':`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+    'Total Traders':`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+    '$100K Accounts':`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`,
+    '$50K Accounts':`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>`
+  };
   const stats=await fetchTab('Stats');
-  document.getElementById('statsRow').innerHTML=stats.map(s=>`<div class="stat-card"><span class="icon">${s.Icon||'📊'}</span><span class="val">${s.Value||'—'}</span><span class="lbl">${s.Label||''}</span></div>`).join('');
+  document.getElementById('statsRow').innerHTML=stats.map(s=>`<div class="stat-card"><span class="icon">${STAT_ICONS[s.Label]||s.Icon||'📊'}</span><span class="val">${s.Value||'—'}</span><span class="lbl">${s.Label||''}</span></div>`).join('');
 
   // Ticker
   const ticker=await fetchTab('Ticker');
