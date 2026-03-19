@@ -374,8 +374,40 @@ async function load(){
   document.getElementById('streakRow').innerHTML=streaks.map(s=>{const n=parseInt(s.Streak)||0;return`<div class="streak-card"><div style="flex:1"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><div class="streak-name" style="color:var(--gold)">${n} Winning Streaks</div></div>${fireSVG(n)}<div class="streak-desc" style="color:var(--text2)">${s.Names||''}</div></div></div>`}).join('');
 
   // Recent Withdrawals
+  const FIRM_LOGOS={
+    'FundedXYZ':'https://ufc.unitycrypto.com/assets/fundedxyz_small_logo-e1174fb845f03d2c1b0bd3c30545de62ade040ce46b186b8cd7fee0e8555560f.png',
+    'PropW':'https://ufc.unitycrypto.com/assets/propw_small_logo-dc0ca349d166b5555f4f5bf7df7c0fe1d7f72828e66245d73bcd971cdd2cc2cc.png',
+    'Pionex':'https://ufc.unitycrypto.com/assets/pionex_small_logo-a1ee8b53f0a0ec71156b3ef5dfdb25a763dcbe15d7634033cf733ba7440a9e73.png',
+    'Hyrotrader':'https://ufc.unitycrypto.com/assets/hyrotrader_small_logo-5b6f64d65522469d6c4fb709fcc46a19b3c0209679c93ea793e0190abc97e77d.png',
+    'MyCryptoFund':'https://ufc.unitycrypto.com/assets/mycryptofund_small_logo.png'
+  };
+  
+  function getFirmLogo(firm,fallback){
+    if(!firm)return fallback||'';
+    if(firm.includes('XYZ')||firm==='FundedXYZ')return FIRM_LOGOS['FundedXYZ'];
+    if(firm==='PropW')return FIRM_LOGOS['PropW'];
+    if(firm==='Pionex')return FIRM_LOGOS['Pionex'];
+    if(firm==='Hyrotrader')return FIRM_LOGOS['Hyrotrader'];
+    if(firm==='MyCryptoFund')return FIRM_LOGOS['MyCryptoFund'];
+    return fallback||'';
+  }
+  
+  function formatTime(timeStr){
+    // Input: "19 March 2026 13:15" -> Output: "19 Mar 2026, 13:15"
+    if(!timeStr)return '';
+    const months={January:'Jan',February:'Feb',March:'Mar',April:'Apr',May:'May',June:'Jun',July:'Jul',August:'Aug',September:'Sep',October:'Oct',November:'Nov',December:'Dec'};
+    const parts=timeStr.match(/(\d+)\s+(\w+)\s+(\d{4})\s+(\d+:\d+)/);
+    if(parts){const[,day,month,year,time]=parts;return`${day} ${months[month]||month} ${year}, ${time}`}
+    return timeStr;
+  }
+  
   const wd=await fetchTab('Withdrawals');
-  document.getElementById('wdCard').innerHTML=wd.map(w=>{const ms=MODE_STYLES[w.Mode]||MODE_STYLES['Z Mode Hard'];return`<div class="wd-item"><div class="wd-logo">${w.Logo?`<img src="${w.Logo}" alt="${w.Firm||''}">`:''}</div><div class="wd-info"><div class="name">${w.Name||''} ${modeTag(w.Mode||'')}</div><div class="meta">${w.Time||''} • ${w.Account||''} • ${w.Firm||''}</div></div><div class="wd-amount">+${(w.Amount||'').replace(/^\+/,'')}</div></div>`}).join('');
+  document.getElementById('wdCard').innerHTML=wd.map(w=>{
+    const ms=MODE_STYLES[w.Mode]||MODE_STYLES['Z Mode Hard'];
+    const logo=getFirmLogo(w.Firm,w.Logo);
+    const time=formatTime(w.Time);
+    return`<div class="wd-item"><div class="wd-logo">${logo?`<img src="${logo}" alt="${w.Firm||''}">`:''}</div><div class="wd-info"><div class="name">${w.Name||''} ${modeTag(w.Mode||'')}</div><div class="meta">${time} • ${w.Account||''} • ${w.Firm||''}</div></div><div class="wd-amount">+${(w.Amount||'').replace(/^\+/,'')}</div></div>`
+  }).join('');
 }
 
 // Countdown
