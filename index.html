@@ -261,7 +261,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="section-title"><span class="emoji">🎰</span> Jackpot Leaderboard</div>
     <div class="tabs"><button class="tab active">All Time</button><button class="tab">30D</button><button class="tab">7D</button></div>
   </div>
-  <div class="card"><table class="tbl"><thead><tr><th>Rank</th><th>Trader</th><th>Biggest Payout</th><th>Account</th></tr></thead><tbody id="jpBody"></tbody></table></div>
+  <div class="card"><table class="tbl"><thead><tr><th>Rank</th><th>Trader</th><th>Jackpot Amount</th><th>Date</th></tr></thead><tbody id="jpBody"></tbody></table></div>
 </section>
 
 
@@ -463,7 +463,7 @@ async function load(){
 
   // Jackpot - loading from Google Sheet
   const jp=await fetchTab('Jackpot');
-  document.getElementById('jpBody').innerHTML=jp.map((r,i)=>{const rk=i+1;const rc=rk<=3?` rank-${rk}`:'';return`<tr><td class="rank${rc}">#${rk}</td><td><div class="trader-cell"><div class="trader-av">${r.Emoji||'💰'}</div><div><div class="trader-name">${r.Name||''}</div><div class="trader-sub">${r.Location||''}</div></div></div></td><td class="mono gold">${r.Amount||''}</td><td class="mono">${r.Account||''}</td></tr>`}).join('');
+  document.getElementById('jpBody').innerHTML=jp.map((r,i)=>{const rk=i+1;const rc=rk<=3?` rank-${rk}`:'';return`<tr><td class="rank${rc}">#${rk}</td><td><div class="trader-cell"><div class="trader-av">${r.Emoji||'💰'}</div><div><div class="trader-name">${r.Name||''}</div></div></div></td><td class="mono gold">${r.Amount||''}</td><td class="mono">${r.Date||''}</td></tr>`}).join('');
 
 
 
