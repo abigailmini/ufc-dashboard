@@ -383,7 +383,16 @@ async function loadWithdrawalLeaderboard(days){
       const tierColor=TIER_COLORS[r.tier]||'var(--text3)';
       const avatarImg=r.avatar?`<img src="${r.avatar}" style="width:36px;height:36px;border-radius:50%;object-fit:cover" onerror="this.style.display='none'">`:r.name.charAt(0);
       
-      return`<tr><td class="rank${rc}">${r.rank}</td><td><div class="trader-cell"><div class="trader-av">${avatarImg}</div><div><div class="trader-name">${r.name}</div><div class="trader-sub" style="color:${tierColor}">${r.tier}</div></div></div></td><td><span class="pill" style="background:rgba(255,255,255,0.05);color:${tierColor};font-size:10px">${r.tier}</span></td><td class="mono gold">${r.amount}</td></tr>`;
+      // Convert K amounts to full numbers
+      let displayAmount=r.amount;
+      const kMatch=r.amount.match(/([\d.]+)K\s*USDT/i);
+      if(kMatch){
+        const numK=parseFloat(kMatch[1]);
+        const fullNum=Math.floor(numK*1000);
+        displayAmount=`${fullNum} USDT`;
+      }
+      
+      return`<tr><td class="rank${rc}">${r.rank}</td><td><div class="trader-cell"><div class="trader-av">${avatarImg}</div><div><div class="trader-name">${r.name}</div></div></div></td><td><span class="pill" style="background:rgba(255,255,255,0.05);color:${tierColor};font-size:10px">${r.tier}</span></td><td class="mono gold">${displayAmount}</td></tr>`;
     }).join('');
     
   }catch(err){
