@@ -253,10 +253,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <section id="jackpot" style="margin-bottom:48px">
   <div class="section-header">
     <div class="section-title"><span class="emoji">🎰</span> Jackpot Leaderboard</div>
-    <div class="tabs"><button class="tab active">All Time</button><button class="tab">This Month</button><button class="tab">This Week</button></div>
+    <div class="tabs" id="jpTabs"><button class="tab" data-days="365">YTD</button><button class="tab active" data-days="90">90D</button><button class="tab" data-days="30">30D</button><button class="tab" data-days="7">7D</button></div>
   </div>
-  <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Every jackpot hit ($1,500 — $5,000) recorded day by day. See who's hitting big.</p>
-  <div class="card"><table class="tbl"><thead><tr><th>#</th><th>Trader</th><th>Jackpot Amount</th><th>Category</th></tr></thead><tbody id="jpBody"></tbody></table></div>
+  <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Live data from UFC — Top challengers by total withdrawals.</p>
+  <div class="card"><table class="tbl"><thead><tr><th>#</th><th>Trader</th><th>Tier</th><th>Total Withdrawal</th></tr></thead><tbody id="jpBody"><tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text3)">Loading...</td></tr></tbody></table></div>
 </section>
 
 
@@ -308,6 +308,89 @@ async function fetchTab(tab){try{const r=await fetch(csvUrl(tab));return parseCS
 const BELT_MAP={white:{cls:'belt-white',color:'var(--belt-white)'},yellow:{cls:'belt-yellow',color:'var(--belt-yellow)'},blue:{cls:'belt-blue',color:'var(--belt-blue)'},red:{cls:'belt-red',color:'var(--belt-red)'},black:{cls:'belt-black',color:'#f8fafc'}};
 const MODE_STYLES={'Z Mode Hard':{bg:'var(--purple-soft)',color:'var(--purple)'},'Z Mode Normal':{bg:'var(--blue-soft)',color:'var(--blue)'},Scholarship:{bg:'var(--gold-soft)',color:'var(--gold)'}};
 function modeTag(m){const s=MODE_STYLES[m]||MODE_STYLES['Z Mode Hard'];return`<span class="mode-tag" style="background:${s.bg};color:${s.color}">${m}</span>`}
+
+// Fetch and parse UFC leaderboard
+async function loadJackpotLeaderboard(days){
+  const tbody=document.getElementById('jpBody');
+  tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text3)">Loading...</td></tr>';
+  
+  try{
+    const allData=[];
+    let page=1;
+    let hasMore=true;
+    
+    // Fetch all pages
+    while(hasMore&&page<=10){// Safety limit: max 10 pages
+      const proxy='https://api.allorigins.win/raw?url=';
+      const url=`${proxy}${encodeURIComponent(`https://ufc.unitycrypto.com/top_challengers?days=${days}&page=${page}`)}`;
+      const resp=await fetch(url);
+      const html=await resp.text();
+      
+      // Parse HTML
+      const parser=new DOMParser();
+      const doc=parser.parseFromString(html,'text/html');
+      
+      // Extract entries
+      const entries=doc.querySelectorAll('.md\\:hidden.flex.items-center');
+      if(entries.length===0){
+        hasMore=false;
+        break;
+      }
+      
+      entries.forEach(entry=>{
+        const rankEl=entry.querySelector('.text-gray-400.text-xs.font-medium');
+        const nameEl=entry.querySelector('a.text-white.hover\\:underline');
+        const tierEl=entry.querySelector('span.inline-flex.items-center');
+        const amountEl=entry.querySelector('.text-yellow-500.font-medium');
+        const avatarEl=entry.querySelector('img.w-8.h-8');
+        
+        if(rankEl&&nameEl&&amountEl){
+          const rank=rankEl.textContent.trim();
+          const name=nameEl.textContent.trim();
+          const tier=(tierEl?tierEl.textContent.trim():'UNCLAIMED').toUpperCase();
+          const amount=amountEl.textContent.trim();
+          let avatar=avatarEl?avatarEl.getAttribute('src'):'';
+          if(avatar&&avatar.startsWith('/'))avatar=`https://ufc.unitycrypto.com${avatar}`;
+          
+          allData.push({rank,name,tier,amount,avatar});
+        }
+      });
+      
+      // Check for next page link
+      const nextLink=doc.querySelector('a[href*="page="]:not([href*="page=1"])');
+      if(!nextLink||entries.length<10)hasMore=false;
+      page++;
+    }
+    
+    // Render table
+    if(allData.length===0){
+      tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text3)">No challengers yet for this period.</td></tr>';
+      return;
+    }
+    
+    const TIER_COLORS={
+      'BLACK TRADER':'var(--text)',
+      'RED TRADER':'var(--red)',
+      'WHITE TRADER':'var(--belt-white)',
+      'BLUE TRADER':'var(--blue)',
+      'YELLOW TRADER':'var(--gold)',
+      'UNCLAIMED':'var(--text3)'
+    };
+    
+    tbody.innerHTML=allData.map((r,i)=>{
+      const rk=parseInt(r.rank.replace('#',''))||i+1;
+      const rc=rk<=3?` rank-${rk}`:'';
+      const tierColor=TIER_COLORS[r.tier]||'var(--text3)';
+      const avatarImg=r.avatar?`<img src="${r.avatar}" style="width:36px;height:36px;border-radius:50%;object-fit:cover" onerror="this.style.display='none'">`:r.name.charAt(0);
+      
+      return`<tr><td class="rank${rc}">${r.rank}</td><td><div class="trader-cell"><div class="trader-av">${avatarImg}</div><div><div class="trader-name">${r.name}</div><div class="trader-sub" style="color:${tierColor}">${r.tier}</div></div></div></td><td><span class="pill" style="background:rgba(255,255,255,0.05);color:${tierColor};font-size:10px">${r.tier}</span></td><td class="mono gold">${r.amount}</td></tr>`;
+    }).join('');
+    
+  }catch(err){
+    console.error('Failed to load jackpot leaderboard:',err);
+    tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--red)">Failed to load data. Please try again.</td></tr>';
+  }
+}
 
 async function load(){
   // Config
@@ -362,9 +445,8 @@ async function load(){
   const lb=await fetchTab('Leaderboard');
   document.getElementById('lbBody').innerHTML=lb.map((r,i)=>{const rk=i+1;const rc=rk<=3?` rank-${rk}`:'';const bk=(r.Belt||'white').toLowerCase();const sub=(r.Subtitle||'').replace(/\$\d+K\s*Account/i,m=>`<span class="acct-size">${m}</span>`);return`<tr><td class="rank${rc}">#${rk}</td><td><div class="trader-cell"><div class="trader-av">${r.Emoji||'👤'}</div><div><div class="trader-name">${r.Name||''} <span class="pill pill-${bk==='black'?'gold':bk==='red'?'red':bk==='blue'?'blue':bk==='yellow'?'gold':'green'}" style="font-size:10px;vertical-align:middle;margin-left:4px">${r.Tier||''}</span></div><div class="trader-sub">${sub}</div></div></div></td><td class="mono hide-mobile">${r.Withdrawals||''}</td><td class="mono gold">${r.Total||''}</td></tr>`}).join('');
 
-  // Jackpot
-  const jp=await fetchTab('Jackpot');
-  document.getElementById('jpBody').innerHTML=jp.map((r,i)=>{const rk=i+1;const rc=rk<=3?` rank-${rk}`:'';const pillCls=parseInt((r.Amount||'0').replace(/[$,]/g,''))>=3000?'pill-orange':'pill-gold';return`<tr><td class="rank${rc}">#${rk}</td><td><div class="trader-cell"><div class="trader-av">${r.Emoji||'🎰'}</div><div><div class="trader-name">${r.Name||''}</div><div class="trader-sub">${r.Date||''}</div></div></div></td><td class="mono" style="color:var(--orange)">${r.Amount||''}</td><td><span class="pill ${pillCls}">${r.Category||''}</span></td></tr>`}).join('');
+  // Jackpot - now using live UFC data
+  loadJackpotLeaderboard(90);
 
 
 
@@ -417,6 +499,14 @@ updateCD();setInterval(updateCD,60000);
 // Tabs
 document.querySelectorAll('.tabs').forEach(g=>{g.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{g.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active')})})});
 document.querySelectorAll('.nav-links a').forEach(a=>{a.addEventListener('click',()=>{document.querySelectorAll('.nav-links a').forEach(x=>x.classList.remove('active'));a.classList.add('active')})});
+
+// Jackpot tabs - load data on click
+document.getElementById('jpTabs').querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    const days=parseInt(tab.getAttribute('data-days'));
+    loadJackpotLeaderboard(days);
+  });
+});
 
 load();setInterval(load,5*60*1000);
 </script>
