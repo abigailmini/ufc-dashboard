@@ -322,10 +322,9 @@ async function loadJackpotLeaderboard(days){
     // Fetch all pages
     while(hasMore&&page<=10){// Safety limit: max 10 pages
       const targetUrl=`https://ufc.unitycrypto.com/top_challengers?days=${days}&page=${page}`;
-      const proxy=`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+      const proxy=`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
       const resp=await fetch(proxy);
-      const data=await resp.json();
-      const html=data.contents;
+      const html=await resp.text();
       
       // Parse HTML
       const parser=new DOMParser();
