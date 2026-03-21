@@ -261,7 +261,12 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="section-title"><span class="emoji">🎰</span> Jackpot Leaderboard</div>
     <div class="tabs"><button class="tab active">All Time</button><button class="tab">30D</button><button class="tab">7D</button></div>
   </div>
-  <div class="card"><table class="tbl"><thead><tr><th>Rank</th><th>Trader</th><th>Jackpot Amount</th><th>Date</th></tr></thead><tbody id="jpBody"></tbody></table></div>
+  <div class="card"><table class="tbl"><thead><tr><th>Rank</th><th>Trader</th><th>Jackpot Amount</th><th>Date</th></tr></thead><tbody id="jpBody"></tbody></table>
+  <div id="jpPagination" style="display:none;padding:12px 16px;border-top:1px solid var(--card-border);display:flex;align-items:center;justify-content:center;gap:12px">
+    <button id="jpPrev" style="background:var(--glass);border:1px solid var(--card-border);color:var(--text2);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px" onclick="jpChangePage(-1)">← Prev</button>
+    <span id="jpPageInfo" style="font-size:13px;color:var(--text3)"></span>
+    <button id="jpNext" style="background:var(--glass);border:1px solid var(--card-border);color:var(--text2);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px" onclick="jpChangePage(1)">Next →</button>
+  </div></div>
 </section>
 
 
@@ -317,6 +322,9 @@ function modeTag(m){const s=MODE_STYLES[m]||MODE_STYLES['Z Mode Hard'];return`<s
 // Fetch and parse UFC leaderboard
 let lbAllData=[];let lbCurrentPage=1;const LB_PER_PAGE=12;
 
+// Jackpot pagination state
+let jpAllData=[];let jpCurrentPage=1;const JP_PER_PAGE=12;
+
 const TIER_COLORS={
   'BLACK TRADER':'var(--text)',
   'RED TRADER':'var(--red)',
@@ -358,6 +366,44 @@ function lbChangePage(dir){
   const totalPages=Math.ceil(lbAllData.length/LB_PER_PAGE);
   lbCurrentPage=Math.max(1,Math.min(totalPages,lbCurrentPage+dir));
   renderLbPage();
+}
+
+// Jackpot pagination
+function renderJpPage(){
+  const tbody=document.getElementById('jpBody');
+  const totalPages=Math.ceil(jpAllData.length/JP_PER_PAGE);
+  const start=(jpCurrentPage-1)*JP_PER_PAGE;
+  const pageData=jpAllData.slice(start,start+JP_PER_PAGE);
+
+  tbody.innerHTML=pageData.map((r,i)=>{
+    const rk=start+i+1;
+    const rc=rk<=3?` rank-${rk}`:'';
+    // Format amount: add $ prefix, handle alphanumeric + special chars
+    let displayAmount=r.Amount||'';
+    if(displayAmount.trim()){
+      // If amount doesn't already start with $, add it
+      if(!displayAmount.trim().startsWith('$')){
+        displayAmount='$'+displayAmount.trim();
+      }
+    }
+    return`<tr><td class="rank${rc}">#${rk}</td><td><div class="trader-cell"><div class="trader-av">${r.Emoji||'💰'}</div><div><div class="trader-name">${r.Name||''}</div></div></div></td><td class="mono gold">${displayAmount}</td><td class="mono">${r.Date||''}</td></tr>`;
+  }).join('');
+
+  const pag=document.getElementById('jpPagination');
+  if(totalPages>1){
+    pag.style.display='flex';
+    document.getElementById('jpPageInfo').textContent=`Page ${jpCurrentPage} of ${totalPages}`;
+    document.getElementById('jpPrev').style.visibility=jpCurrentPage<=1?'hidden':'visible';
+    document.getElementById('jpNext').style.visibility=jpCurrentPage>=totalPages?'hidden':'visible';
+  }else{
+    pag.style.display='none';
+  }
+}
+
+function jpChangePage(dir){
+  const totalPages=Math.ceil(jpAllData.length/JP_PER_PAGE);
+  jpCurrentPage=Math.max(1,Math.min(totalPages,jpCurrentPage+dir));
+  renderJpPage();
 }
 
 async function loadWithdrawalLeaderboard(days){
@@ -461,9 +507,22 @@ async function load(){
   // Total Withdrawal Leaderboard - now using live UFC data
   loadWithdrawalLeaderboard(365);
 
-  // Jackpot - loading from Google Sheet
-  const jp=await fetchTab('Jackpot');
-  document.getElementById('jpBody').innerHTML=jp.map((r,i)=>{const rk=i+1;const rc=rk<=3?` rank-${rk}`:'';return`<tr><td class="rank${rc}">#${rk}</td><td><div class="trader-cell"><div class="trader-av">${r.Emoji||'💰'}</div><div><div class="trader-name">${r.Name||''}</div></div></div></td><td class="mono gold">${r.Amount||''}</td><td class="mono">${r.Date||''}</td></tr>`}).join('');
+  // Jackpot - loading from Google Sheet (only columns A, B, C, D, E)
+  const jpRaw=await fetchTab('Jackpot');
+  // Sheet structure: A=Emoji, B=Name, C=Amount, D=Category, E=Date
+  // We display: Rank (generated), Trader (Emoji+Name from A+B), Amount (C), Date (E)
+  jpAllData=jpRaw.map(r=>{
+    return{
+      Emoji:r.Emoji||'💰',     // Column A
+      Name:r.Name||'',         // Column B
+      Amount:r.Amount||'',     // Column C
+      Date:r.Date||''          // Column E (skip Category/Column D)
+    };
+  });
+  
+  // Reset to page 1 and render
+  jpCurrentPage=1;
+  renderJpPage();
 
 
 
