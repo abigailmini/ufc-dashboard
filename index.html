@@ -304,11 +304,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 </div>
 
 <script>
-const SID='1G8ytuX-x8VOM0-FLIWO-RaquT8NjPQA9W6G-ru6kyrE';
-function csvUrl(tab){return`https://docs.google.com/spreadsheets/d/${SID}/gviz/tq?tqx=out:csv&headers=1&sheet=${encodeURIComponent(tab)}`}
+// Cloudflare Worker proxy endpoint (replace with actual worker URL after deployment)
+const WORKER_URL='https://ufc-proxy.unitycrypto.com/api/data';
 function parseCSVLine(l){const r=[];let c='',q=false;for(let i=0;i<l.length;i++){const ch=l[i];if(q){if(ch==='"'&&l[i+1]==='"'){c+='"';i++}else if(ch==='"')q=false;else c+=ch}else{if(ch==='"')q=true;else if(ch===','){r.push(c);c=''}else c+=ch}}r.push(c);return r}
 function parseCSV(t){const lines=t.trim().split('\n');if(lines.length<2)return[];const h=parseCSVLine(lines[0]);return lines.slice(1).filter(l=>l.trim()).map(l=>{const v=parseCSVLine(l);const o={};h.forEach((k,i)=>o[k.trim()]=((v[i]||'').trim()));return o})}
-async function fetchTab(tab){try{const r=await fetch(csvUrl(tab));return parseCSV(await r.text())}catch(e){console.error(tab,e);return[]}}
+async function fetchTab(tab){try{const r=await fetch(`${WORKER_URL}?tab=${encodeURIComponent(tab)}`);if(!r.ok)throw new Error(`HTTP ${r.status}`);return parseCSV(await r.text())}catch(e){console.error(tab,e);return[]}}
 
 const BELT_MAP={white:{cls:'belt-white',color:'var(--belt-white)'},yellow:{cls:'belt-yellow',color:'var(--belt-yellow)'},blue:{cls:'belt-blue',color:'var(--belt-blue)'},red:{cls:'belt-red',color:'var(--belt-red)'},black:{cls:'belt-black',color:'#f8fafc'}};
 const MODE_STYLES={'Z Mode Hard':{bg:'var(--purple-soft)',color:'var(--purple)'},'Z Mode Normal':{bg:'var(--blue-soft)',color:'var(--blue)'},Scholarship:{bg:'var(--gold-soft)',color:'var(--gold)'}};
