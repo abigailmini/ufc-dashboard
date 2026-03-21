@@ -511,11 +511,12 @@ async function load(){
   const jpRaw=await fetchTab('Jackpot');
   // Sheet structure: A=Emoji, B=Name, C=Amount, D=Category, E=Date
   // We display: Rank (generated), Trader (Emoji+Name from A+B), Amount (C), Date (E)
-  jpAllData=jpRaw.map(r=>{
+  // Filter out empty rows (rows where Name is empty)
+  jpAllData=jpRaw.filter(r=>r.Name&&r.Name.trim()).map(r=>{
     return{
       Emoji:r.Emoji||'💰',     // Column A
       Name:r.Name||'',         // Column B
-      Amount:r.Amount||'',     // Column C
+      Amount:r.Amount||'',     // Column C (preserve "****.**" if present)
       Date:r.Date||''          // Column E (skip Category/Column D)
     };
   });
